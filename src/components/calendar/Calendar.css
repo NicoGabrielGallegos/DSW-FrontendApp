@@ -1,0 +1,28 @@
+.calendar-arrow {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    line-height: 100%;
+}
+
+.calendar-date,
+.calendar-date-disabled,
+.calendar-date-disabled-selected,
+.calendar-date-selected {
+    line-height: 100%;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+}
+
+.calendar-date-disabled {
+    color: gray;
+}
+
+.calendar-date-selected {
+    color: greenyellow;
+}
+
+.calendar-date-disabled-selected {
+    color: green;
+}
