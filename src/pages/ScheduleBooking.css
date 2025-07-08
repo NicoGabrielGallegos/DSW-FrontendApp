@@ -1,0 +1,22 @@
+#root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/*@media screen and (width < 700px) {
+/*    #root {
+/*        flex-direction: column;
+/*        align-items: center;
+/*    }
+/*}*/
+
+.time-tables {
+    width: 100%;
+    max-width: 1300px;
+    display: flex;
+    align-items: start;
+    justify-content: space-evenly;
+}

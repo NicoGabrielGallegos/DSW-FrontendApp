@@ -1,18 +1,9 @@
+import { today, dayNames, monthNames } from "../commons/Constants.tsx"
 import { useState } from "react"
 import "./Calendar.css"
 
-const dayNames = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"]
-const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-const today = new Date()
-
-function addDays(date: Date, days: number): Date {
-    let newDate: Date = new Date(date)
-    newDate.setDate(newDate.getDate() + days)
-    return newDate
-}
-
-export default function Calendar() {
-    const [selectedDay, selectDay] = useState(today)
+export default function Calendar({onSelectedDateChange}: {onSelectedDateChange?: Function}) {
+    const [selectedDate, selectDate] = useState(today)
     const [monthToShow, selectMonth] = useState(today.getMonth())
     const [yearToShow, selectYear] = useState(today.getFullYear())
 
@@ -25,7 +16,7 @@ export default function Calendar() {
     }
 
     function getFirstCalendarDateToShow(): Date {
-        return addDays(getFirstDateOfMonth(), -getStartingWeekDayOfMonth())
+        return getFirstDateOfMonth().addDays(-getStartingWeekDayOfMonth())
     }
 
     function getDatesToShow(): Date[][] {
@@ -34,7 +25,7 @@ export default function Calendar() {
         for (let j = 0; j < 6; j++) {
             showedNumbers.push([])
             for (let i = 0; i < 7; i++) {
-                showedNumbers[j].push(addDays(firstDate, i + j*7))
+                showedNumbers[j].push(firstDate.addDays(i + j*7))
                 
             }
         }
@@ -52,7 +43,7 @@ export default function Calendar() {
 
     return (
         <>
-            <table>
+            <table className="calendar">
                 <tbody>
                     <tr>
                         <th><button className="calendar-arrow" onClick={() => onMonthChange((monthToShow + 11) % 12)}>&lt;</button></th>
@@ -76,12 +67,15 @@ export default function Calendar() {
                                 return (
                                     <td key={num_idx}>
                                         <button
-                                            className={"calendar-date" + (date.getMonth() == monthToShow ? "" : "-disabled") + (date.getDate() == selectedDay.getDate() && date.getMonth() == selectedDay.getMonth() ? "-selected" : "")}
+                                            className={"calendar-date" + (date.getMonth() == monthToShow ? "" : "-disabled") + (date.getDate() == selectedDate.getDate() && date.getMonth() == selectedDate.getMonth() ? "-selected" : "")}
                                             onClick={() => {
                                                 if (date.getMonth() != monthToShow) {
                                                     selectMonth(date.getMonth())
                                                 }
-                                                selectDay(date)
+                                                selectDate(date)
+                                                if (onSelectedDateChange) {
+                                                    onSelectedDateChange(date)
+                                                }
                                             }}
                                         >
                                             {

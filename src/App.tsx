@@ -1,10 +1,11 @@
 import './App.css'
-import Calendar from './components/calendar/Calendar.tsx'
+import "./commons/DateExtensions.tsx"
+import ScheduleBooking from './pages/ScheduleBooking.tsx'
 
 function App() {
   return (
     <>
-      <Calendar />
+      <ScheduleBooking />
     </>
   )
 }
