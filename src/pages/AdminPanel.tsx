@@ -14,7 +14,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Menu, MenuItem } from '@mui/material';
-import { Link, Outlet } from 'react-router';
+import { Link as RouterLink, Outlet } from 'react-router';
 
 const drawerWidth = 240;
 
@@ -57,8 +57,8 @@ export default function ResponsiveDrawer(props: Props) {
             <Divider />
             <List>
                 {['Alumnos', 'Docentes', 'Materias'].map((text, index) => (
-                    <Link to={text.toLowerCase()}>
-                        <ListItem key={text} disablePadding>
+                    <RouterLink to={text.toLowerCase()} key={text}>
+                        <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
                                     <Icon>{["person", "person", "assignment"][index]}</Icon>
@@ -66,33 +66,37 @@ export default function ResponsiveDrawer(props: Props) {
                                 <ListItemText primary={text} />
                             </ListItemButton>
                         </ListItem>
-                    </Link>
+                    </RouterLink>
                 ))}
             </List>
             <Divider />
             <List>
                 {['Dictados', 'Inscripciones'].map((text) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Icon>list</Icon>
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
+                    <RouterLink to={text.toLowerCase()} key={text}>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <Icon>list</Icon>
+                                </ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItemButton>
+                        </ListItem>
+                    </RouterLink>
                 ))}
             </List>
             <Divider />
             <List>
                 {['Consultas', 'Calificaciones'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Icon>{["school", "star"][index]}</Icon>
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
+                    <RouterLink to={text.toLowerCase()} key={text}>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <Icon>{["school", "star"][index]}</Icon>
+                                </ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItemButton>
+                        </ListItem>
+                    </RouterLink>
                 ))}
             </List>
         </div>

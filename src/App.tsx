@@ -5,6 +5,7 @@ import ScheduleBooking from './pages/ScheduleBooking.tsx'
 import Login from './pages/Login.tsx'
 import Register from './pages/Register.tsx'
 import AdminPanel from './pages/AdminPanel.tsx'
+import DataTable from './components/admin_panel/DataTable.tsx'
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="admin" element={<AdminPanel />}>
-          <Route path="alumnos" element={<>CRUD Alumnos</>} />
+          <Route path="alumnos" element={<DataTable />} />
           <Route path="docentes" element={<>CRUD Docentes</>} />
           <Route path="materias" element={<>CRUD Materias</>} />
           <Route path="dictados" element={<>CRUD Dictados</>} />
