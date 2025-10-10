@@ -52,12 +52,12 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
             <Toolbar />
             <Divider />
             <List>
-                {['Alumnos', 'Docentes', 'Materias'].map((text, index) => (
+                {['Materias', 'Docentes', 'Consultas'].map((text, index) => (
                     <RouterLink to={text.toLowerCase()} key={text}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <Icon>{["person", "person", "assignment"][index]}</Icon>
+                                    <Icon>{["auto_stories", "people_alt", "calendar_month"][index]}</Icon>
                                 </ListItemIcon>
                                 <ListItemText primary={text} />
                             </ListItemButton>
@@ -65,36 +65,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                     </RouterLink>
                 ))}
             </List>
-            <Divider />
-            <List>
-                {['Dictados', 'Inscripciones'].map((text) => (
-                    <RouterLink to={text.toLowerCase()} key={text}>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <Icon>list</Icon>
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    </RouterLink>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                {['Consultas', 'Calificaciones'].map((text, index) => (
-                    <RouterLink to={text.toLowerCase()} key={text}>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <Icon>{["school", "star"][index]}</Icon>
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    </RouterLink>
-                ))}
-            </List>
+            <Divider></Divider>
         </div>
     );
 
