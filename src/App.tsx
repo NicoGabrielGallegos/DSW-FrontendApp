@@ -1,19 +1,33 @@
 import './App.css'
 import "./commons/DateExtensions.tsx"
-import { BrowserRouter, Routes, Route } from 'react-router'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import ScheduleBooking from './pages/ScheduleBooking.tsx'
-import Login from './pages/Login.tsx'
-import Register from './pages/Register.tsx'
+import LoginAlumno from './pages/LoginAlumno.tsx'
+import LoginDocente from './pages/LoginDocente.tsx'
 import AdminPanel from './pages/AdminPanel.tsx'
 import DataTable from './components/admin_panel/DataTable.tsx'
+import Materias from './pages/Materias.tsx'
+import Dashboard from './pages/Dashboard.tsx'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="calendar" element={<ScheduleBooking />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="login">
+          <Route index element={<Navigate to="/login/alumnos" replace />} />
+          <Route path="alumnos" element={<LoginAlumno />} />
+          <Route path="docentes" element={<LoginDocente />} />
+          <Route
+            path="*"
+            element={<Navigate to="/login/alumnos" replace />}
+          />
+        </Route>
+        <Route path="dashboard">
+          <Route index element={<Dashboard />} />
+          <Route path="materias" element={<Materias />} />
+
+        </Route>
         <Route path="admin" element={<AdminPanel />}>
           <Route path="alumnos" element={<DataTable />} />
           <Route path="docentes" element={<>CRUD Docentes</>} />

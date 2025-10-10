@@ -3,6 +3,10 @@
   text-align: center;
 }
 
+body {
+  margin: 0 auto;
+}
+
 /*
 #root {
   max-width: 1280px;
