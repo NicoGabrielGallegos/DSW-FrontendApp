@@ -14,6 +14,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Input from "@mui/material/Input";
+import { apiClient } from "../api/apiClient.ts";
+import { API_ROUTES } from "../api/endpoints.ts";
 
 export default function LoginAlumno() {
     const [showPassword, setShowPassword] = useState(false);
@@ -28,8 +30,16 @@ export default function LoginAlumno() {
         event.preventDefault();
     };
 
+    const handleLogin = async () => {
+        const correo = (document.getElementById("correo") as HTMLInputElement).value
+        const password = (document.getElementById("contraseña") as HTMLInputElement).value
+        const token = (await apiClient.post(API_ROUTES.ALUMNOS.LOGIN, { body: { correo, password } })).data
+        console.log(token);
+        localStorage.setItem("token", token)
+    }
+
     return (
-        <Box sx={{margin: "0 auto", textAlign: "center", width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center"}}>
+        <Box sx={{ margin: "0 auto", textAlign: "center", width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Paper elevation={4} sx={{ display: "flex", width: "80%", minWidth: 275, maxWidth: 350, m: 1, p: 4, alignItems: "center", justifyContent: "center" }}>
                 <Grid container spacing={0} alignItems={"center"}>
                     <Grid size={12} pt={3} pb={3}>
@@ -78,7 +88,7 @@ export default function LoginAlumno() {
                         </Link>
                     </Grid>
                     <Grid size={12} pt={2} pb={1}>
-                        <Button variant="contained" sx={{ m: 1 }}>Iniciar Sesión</Button>
+                        <Button variant="contained" sx={{ m: 1 }} onClick={handleLogin}>Iniciar Sesión</Button>
                     </Grid>
                     <Grid size={12}>
                         <Link href="/login/docentes" sx={{ fontSize: 12 }} color="textSecondary">

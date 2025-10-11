@@ -1,5 +1,11 @@
 
-async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", options: { body?: any, headers?: any, params?: any } = defaultOptions) {
+async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", options: { body?: any, headers?: any, params?: any }) {
+    if (!options.headers) options.headers = {}
+    if (!options.params) options.params = {}
+
+    console.log(options.body ? JSON.stringify(options.body) : undefined);
+    
+
     // Crear URL normalizada
     const url = new URL(endpoint)
 
@@ -18,7 +24,7 @@ async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH
             headers: { ...defaultHeaders, ...options.headers },
             body: options.body ? JSON.stringify(options.body) : undefined,
         })
-
+        
         const data = await response.json();
 
         if (!response.ok) {
@@ -32,12 +38,12 @@ async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH
     }
 }
 
-const defaultOptions = {headers: {}, params: {}}
+type OptionsType = { body?: {}, headers?: {}, params?: {} }
 
 export const apiClient = {
-    get: (endpoint: string, options = defaultOptions) => request(endpoint, "GET", { ...options }),
-    post: (endpoint: string, options = defaultOptions) => request(endpoint, "POST", { ...options }),
-    put: (endpoint: string, options = defaultOptions) => request(endpoint, "PUT", { ...options }),
-    patch: (endpoint: string, options = defaultOptions) => request(endpoint, "PATCH", { ...options }),
-    delete: (endpoint: string, options = defaultOptions) => request(endpoint, "DELETE", { ...options }),
+    get: (endpoint: string, options: OptionsType = {}) => request(endpoint, "GET", { ...options }),
+    post: (endpoint: string, options: OptionsType = {}) => request(endpoint, "POST", { ...options }),
+    put: (endpoint: string, options: OptionsType = {}) => request(endpoint, "PUT", { ...options }),
+    patch: (endpoint: string, options: OptionsType = {}) => request(endpoint, "PATCH", { ...options }),
+    delete: (endpoint: string, options: OptionsType = {}) => request(endpoint, "DELETE", { ...options }),
 }

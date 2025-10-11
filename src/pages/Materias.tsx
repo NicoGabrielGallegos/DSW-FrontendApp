@@ -19,7 +19,7 @@ export default function Materias() {
     useEffect(() => {
         async function fetchMaterias() {
             try {
-                const res = await apiClient.get(API_ROUTES.MATERIAS.FIND_ALL)
+                const res = await apiClient.get(API_ROUTES.MATERIAS.FIND_ALL, {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}})
                 setMaterias(res.data)
             } catch (err: any) {
                 setError(err.message)
