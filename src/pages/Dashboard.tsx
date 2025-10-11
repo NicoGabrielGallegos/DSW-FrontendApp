@@ -49,7 +49,7 @@ export default function Materias() {
         <>
             <AppBar position="static" >
                 <Toolbar>
-                    <Typography variant="h5" color="inherit" component="div" p={2} flexGrow={1}>
+                    <Typography variant="h6" color="inherit" component="div" p={2} flexGrow={1}>
                         Landing Page
                     </Typography>
                     <IconButton

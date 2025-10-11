@@ -53,7 +53,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
             <Divider />
             <List>
                 {['Materias', 'Docentes', 'Consultas'].map((text, index) => (
-                    <RouterLink to={text.toLowerCase()} key={text}>
+                    <RouterLink to={`/dashboard/${text.toLowerCase()}`} key={text}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>

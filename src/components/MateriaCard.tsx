@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -8,7 +7,7 @@ import Grid from '@mui/material/Grid';
 
 export default function MateriaCard({id, nombreMateria}: {id: string, nombreMateria: string}) {
     return (
-        <Card sx={{ display: "flex" }} elevation={3}>
+        <Card elevation={3}>
             <CardContent sx={{
                 pt: { xs: 2 , md: 0},
                 pr: { xs: 0 , md: 1},
@@ -17,19 +16,19 @@ export default function MateriaCard({id, nombreMateria}: {id: string, nombreMate
             }}
             >
                 <Grid container alignItems={"center"}>
-                    <Grid size={{ xs: 12, md: 6 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
+                    <Grid size={{ xs: 12, md: 8, lg: 6 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
                         <Typography variant="h5" component="div" align="inherit">
                             {nombreMateria}
                         </Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid size={{ xs: 12, md: 4, lg: 6 }}>
                         <Grid container>
-                            <Grid size={{ xs: 6, md: 12 }}>
+                            <Grid size={{ xs: 6, md: 12, lg: 6 }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
                                     <Button size="small">Ver docentes</Button>
                                 </CardActions>
                             </Grid>
-                            <Grid size={{ xs: 6, md: 12 }}>
+                            <Grid size={{ xs: 6, md: 12, lg: 6 }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
                                     <Button size="small">Ver consultas</Button>
                                 </CardActions>
