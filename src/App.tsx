@@ -8,6 +8,7 @@ import AdminPanel from './pages/AdminPanel.tsx'
 import DataTable from './components/admin_panel/DataTable.tsx'
 import Materias from './pages/Materias.tsx'
 import Dashboard from './pages/Dashboard.tsx'
+import { PrivateRoute } from './components/PrivateRouter.tsx'
 
 function App() {
   return (
@@ -24,9 +25,8 @@ function App() {
           />
         </Route>
         <Route path="dashboard">
-          <Route index element={<Dashboard />} />
-          <Route path="materias" element={<Materias />} />
-
+          <Route index element={<PrivateRoute redirectTo="/login/alumnos"><Dashboard /></PrivateRoute>} />
+          <Route path="materias" element={<PrivateRoute redirectTo="/login/alumnos"><Materias /></PrivateRoute>} />
         </Route>
         <Route path="admin" element={<AdminPanel />}>
           <Route path="alumnos" element={<DataTable />} />

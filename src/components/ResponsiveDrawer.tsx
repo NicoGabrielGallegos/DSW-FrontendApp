@@ -13,8 +13,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Menu, MenuItem } from '@mui/material';
 import { Link as RouterLink } from 'react-router';
+import ProfileButton from './ProfileButton.tsx';
 
 const drawerWidth = 240;
 
@@ -22,7 +22,6 @@ const drawerWidth = 240;
 export default function ResponsiveDrawer({ title, children }: { title: string, children?: any }) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -37,14 +36,6 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
         if (!isClosing) {
             setMobileOpen(!mobileOpen);
         }
-    };
-
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
     };
 
     const drawer = (
@@ -93,34 +84,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                         {title}
                     </Typography>
                     <div>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="inherit"
-                        >
-                            <Icon>account_circle</Icon>
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                            <MenuItem onClick={handleClose}>My account</MenuItem>
-                        </Menu>
+                        <ProfileButton />
                     </div>
                 </Toolbar>
             </AppBar>

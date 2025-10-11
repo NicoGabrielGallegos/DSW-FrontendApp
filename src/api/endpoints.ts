@@ -12,6 +12,9 @@ export const API_ROUTES = {
         FIND_BY_CONSULTA: (consulta: string) => `${BASE_URL}/alumnos/byCorreo/${consulta}`,
         LOGIN: `${BASE_URL}/alumnos/login`
     },
+    DOCENTES: {
+        LOGIN: `${BASE_URL}/docentes/login`
+    },
     MATERIAS: {
         FIND_ALL: `${BASE_URL}/materias`,
         FIND_ONE: (id: string) => `${BASE_URL}/materias/${id}`,

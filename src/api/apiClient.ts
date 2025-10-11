@@ -3,9 +3,6 @@ async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH
     if (!options.headers) options.headers = {}
     if (!options.params) options.params = {}
 
-    console.log(options.body ? JSON.stringify(options.body) : undefined);
-    
-
     // Crear URL normalizada
     const url = new URL(endpoint)
 

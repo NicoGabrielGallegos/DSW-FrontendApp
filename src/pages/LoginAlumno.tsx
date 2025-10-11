@@ -16,9 +16,13 @@ import Paper from "@mui/material/Paper";
 import Input from "@mui/material/Input";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
+import { Navigate, useNavigate } from "react-router";
+import { login } from "../utils/login.ts";
+import { isAuthenticated } from "../utils/auth.ts";
 
 export default function LoginAlumno() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate()
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -33,12 +37,11 @@ export default function LoginAlumno() {
     const handleLogin = async () => {
         const correo = (document.getElementById("correo") as HTMLInputElement).value
         const password = (document.getElementById("contraseña") as HTMLInputElement).value
-        const token = (await apiClient.post(API_ROUTES.ALUMNOS.LOGIN, { body: { correo, password } })).data
-        console.log(token);
-        localStorage.setItem("token", token)
+        login("alumno", correo, password, navigate)
     }
 
     return (
+        isAuthenticated() ? <Navigate to={"/dashboard"} /> : 
         <Box sx={{ margin: "0 auto", textAlign: "center", width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Paper elevation={4} sx={{ display: "flex", width: "80%", minWidth: 275, maxWidth: 350, m: 1, p: 4, alignItems: "center", justifyContent: "center" }}>
                 <Grid container spacing={0} alignItems={"center"}>
