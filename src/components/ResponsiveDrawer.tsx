@@ -61,7 +61,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
     );
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', width: "100%"}}>
             <CssBaseline />
             <AppBar
                 position="fixed"

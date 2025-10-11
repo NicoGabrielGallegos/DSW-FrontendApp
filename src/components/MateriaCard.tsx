@@ -4,20 +4,57 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import Skeleton from '@mui/material/Skeleton';
 
-export default function MateriaCard({id, nombreMateria}: {id: string, nombreMateria: string}) {
+export function MateriaCardSkeleton() {
     return (
         <Card elevation={3}>
             <CardContent sx={{
-                pt: { xs: 2 , md: 0},
-                pr: { xs: 0 , md: 1},
+                pt: { xs: 2, md: 0 },
+                pr: 2,
                 pb: "0 !important",
-                pl: { xs: 0 , md: 2},
+                pl: 2,
             }}
             >
                 <Grid container alignItems={"center"}>
                     <Grid size={{ xs: 12, md: 8, lg: 6 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
-                        <Typography variant="h5" component="div" align="inherit">
+                        <Typography variant="h5" component="div" align="inherit" sx={{ py: { md: 2 }, fontSize: { xs: "1rem", md: "1.5rem" } }}>
+                            <Skeleton />
+                        </Typography>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 4, lg: 6 }}>
+                        <Grid container>
+                            <Grid size={{ xs: 6, md: 12, lg: 6 }}>
+                                <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
+                                    <Skeleton width={110} />
+                                </CardActions>
+                            </Grid>
+                            <Grid size={{ xs: 6, md: 12, lg: 6 }}>
+                                <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
+                                    <Skeleton width={110} />
+                                </CardActions>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </CardContent>
+        </Card>
+    );
+}
+
+export default function MateriaCard({ id, nombreMateria }: { id: string, nombreMateria: string }) {
+    return (
+        <Card elevation={3}>
+            <CardContent sx={{
+                pt: { xs: 2, md: 0 },
+                pr: { xs: 0, md: 1 },
+                pb: "0 !important",
+                pl: { xs: 0, md: 2 },
+            }}
+            >
+                <Grid container alignItems={"center"}>
+                    <Grid size={{ xs: 12, md: 8, lg: 6 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
+                        <Typography variant="h5" component="div" align="inherit" sx={{ py: { md: 2 }, fontSize: { xs: "1rem", md: "1.5rem" } }}>
                             {nombreMateria}
                         </Typography>
                     </Grid>
@@ -25,12 +62,12 @@ export default function MateriaCard({id, nombreMateria}: {id: string, nombreMate
                         <Grid container>
                             <Grid size={{ xs: 6, md: 12, lg: 6 }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Button size="small">Ver docentes</Button>
+                                    <Button size="small" sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver docentes</Button>
                                 </CardActions>
                             </Grid>
                             <Grid size={{ xs: 6, md: 12, lg: 6 }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Button size="small">Ver consultas</Button>
+                                    <Button size="small" sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver consultas</Button>
                                 </CardActions>
                             </Grid>
                         </Grid>

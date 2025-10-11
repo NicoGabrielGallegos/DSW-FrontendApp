@@ -3,11 +3,11 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 import Icon from "@mui/material/Icon";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import ProfileButton from "../components/ProfileButton.tsx";
+import { useNavigate } from "react-router";
 
 const cards = [
     {
@@ -30,6 +30,7 @@ const cards = [
 export default function Dashboard() {
     const nombre = localStorage.getItem("nombre") || ""
     const apellido = localStorage.getItem("apellido") || ""
+    const navigate = useNavigate()
 
     return (
         <>
@@ -46,11 +47,7 @@ export default function Dashboard() {
                 {cards.map((card, index) => (
                     <Grid size={{ xs: 12, md: 4 }} key={index} mx={{ xs: 4, md: 0 }}>
                         <Card elevation={3}>
-                            <CardActionArea
-                                LinkComponent={Link}
-                                href={`/dashboard/${card.url}`}
-                                onClick={() => { }}
-                            >
+                            <CardActionArea onClick={() => navigate(`/dashboard/${card.url}`)}>
                                 <CardContent sx={{ height: '100%' }}>
                                     <Typography color="text.secondary">
                                         <Icon sx={{ fontSize: 48 }}>{card.icon}</Icon>
