@@ -3,12 +3,11 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-import { logout } from "../utils/login.ts";
-import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfileButton() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const navigate = useNavigate()
+    const auth = useAuth()
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -19,7 +18,7 @@ export default function ProfileButton() {
     };
 
     const handleLogout = () => {
-        logout(navigate)
+        auth.logout()
     }
 
     return (

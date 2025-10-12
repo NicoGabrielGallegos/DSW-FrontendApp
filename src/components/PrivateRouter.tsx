@@ -1,6 +1,8 @@
 import { Navigate } from "react-router"
-import { isAuthenticated } from "../utils/auth.ts"
+import { useAuth } from "../context/AuthContext.tsx"
 
 export function PrivateRoute({ children, redirectTo = "/login" }: { children?: any, redirectTo: string }) {
-    return isAuthenticated() ? children : <Navigate to={redirectTo} />
+    const auth = useAuth()
+    
+    return auth.isAuthenticated() ? children : <Navigate to={redirectTo} />
 }

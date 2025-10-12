@@ -9,36 +9,39 @@ import DataTable from './components/admin_panel/DataTable.tsx'
 import Materias from './pages/Materias.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import { PrivateRoute } from './components/PrivateRouter.tsx'
+import { AuthProvider } from './context/AuthContext.tsx'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="calendar" element={<ScheduleBooking />} />
-        <Route path="login">
-          <Route index element={<Navigate to="/login/alumnos" replace />} />
-          <Route path="alumnos" element={<LoginAlumno />} />
-          <Route path="docentes" element={<LoginDocente />} />
-          <Route
-            path="*"
-            element={<Navigate to="/login/alumnos" replace />}
-          />
-        </Route>
-        <Route path="dashboard">
-          <Route index element={<PrivateRoute redirectTo="/login/alumnos"><Dashboard /></PrivateRoute>} />
-          <Route path="materias" element={<PrivateRoute redirectTo="/login/alumnos"><Materias /></PrivateRoute>} />
-        </Route>
-        <Route path="admin" element={<AdminPanel />}>
-          <Route path="alumnos" element={<DataTable />} />
-          <Route path="docentes" element={<>CRUD Docentes</>} />
-          <Route path="materias" element={<>CRUD Materias</>} />
-          <Route path="dictados" element={<>CRUD Dictados</>} />
-          <Route path="inscripciones" element={<>CRUD Inscripciones</>} />
-          <Route path="consultas" element={<>CRUD Consultas</>} />
-          <Route path="calificaciones" element={<>CRUD Calificaciones</>} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="calendar" element={<ScheduleBooking />} />
+          <Route path="login">
+            <Route index element={<Navigate to="/login/alumnos" replace />} />
+            <Route path="alumnos" element={<LoginAlumno />} />
+            <Route path="docentes" element={<LoginDocente />} />
+            <Route
+              path="*"
+              element={<Navigate to="/login/alumnos" replace />}
+            />
+          </Route>
+          <Route path="dashboard">
+            <Route index element={<PrivateRoute redirectTo="/login/alumnos"><Dashboard /></PrivateRoute>} />
+            <Route path="materias" element={<PrivateRoute redirectTo="/login/alumnos"><Materias /></PrivateRoute>} />
+          </Route>
+          <Route path="admin" element={<AdminPanel />}>
+            <Route path="alumnos" element={<DataTable />} />
+            <Route path="docentes" element={<>CRUD Docentes</>} />
+            <Route path="materias" element={<>CRUD Materias</>} />
+            <Route path="dictados" element={<>CRUD Dictados</>} />
+            <Route path="inscripciones" element={<>CRUD Inscripciones</>} />
+            <Route path="consultas" element={<>CRUD Consultas</>} />
+            <Route path="calificaciones" element={<>CRUD Calificaciones</>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

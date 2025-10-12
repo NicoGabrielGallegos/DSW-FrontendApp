@@ -43,6 +43,19 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
             <Toolbar />
             <Divider />
             <List>
+                <RouterLink to={"/dashboard"} >
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Icon>book</Icon>
+                            </ListItemIcon>
+                            <ListItemText primary="Dashboard" />
+                        </ListItemButton>
+                    </ListItem>
+                </RouterLink>
+            </List>
+            <Divider />
+            <List>
                 {['Materias', 'Docentes', 'Consultas'].map((text, index) => (
                     <RouterLink to={`/dashboard/${text.toLowerCase()}`} key={text}>
                         <ListItem disablePadding>
@@ -56,12 +69,12 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                     </RouterLink>
                 ))}
             </List>
-            <Divider></Divider>
+            <Divider />
         </div>
     );
 
     return (
-        <Box sx={{ display: 'flex', width: "100%"}}>
+        <Box sx={{ display: 'flex', width: "100%" }}>
             <CssBaseline />
             <AppBar
                 position="fixed"

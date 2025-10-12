@@ -8,6 +8,8 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import ProfileButton from "../components/ProfileButton.tsx";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext.tsx";
+import { EMPTY_USER } from "../types/User.ts";
 
 const cards = [
     {
@@ -28,8 +30,8 @@ const cards = [
 ];
 
 export default function Dashboard() {
-    const nombre = localStorage.getItem("nombre") || ""
-    const apellido = localStorage.getItem("apellido") || ""
+    const auth = useAuth()
+    const user = auth.user || EMPTY_USER
     const navigate = useNavigate()
 
     return (
@@ -37,12 +39,12 @@ export default function Dashboard() {
             <AppBar position="static" >
                 <Toolbar>
                     <Typography variant="h6" color="inherit" component="div" p={2} flexGrow={1}>
-                        {`Hola, ${nombre} ${apellido}!`}
+                        {`Hola, ${user.nombre} ${user.apellido}!`}
                     </Typography>
                     <ProfileButton />
                 </Toolbar>
             </AppBar>
-            <Typography variant="h4" color="textSecondary" sx={{ mt: { xs: 4, md: 12 }, mb: {xs: 4, md: 0} }}>¿Qué te interesa ver?</Typography>
+            <Typography variant="h4" color="textSecondary" sx={{ mt: { xs: 4, md: 12 }, mb: { xs: 4, md: 0 } }}>¿Qué te interesa ver?</Typography>
             <Grid container spacing={8} sx={{ mt: { xs: 4, md: 12 } }}>
                 {cards.map((card, index) => (
                     <Grid size={{ xs: 12, md: 4 }} key={index} mx={{ xs: 4, md: 0 }}>
