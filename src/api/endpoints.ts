@@ -9,10 +9,17 @@ export const API_ROUTES = {
         PATCH: (id: string) => `${BASE_URL}/alumnos/${id}`,
         DELETE: (id: string) => `${BASE_URL}/alumnos/${id}`,
         FIND_BY_CORREO: (correo: string) => `${BASE_URL}/alumnos/byCorreo/${correo}`,
-        FIND_BY_CONSULTA: (consulta: string) => `${BASE_URL}/alumnos/byCorreo/${consulta}`,
+        FIND_BY_CONSULTA: (consulta: string) => `${BASE_URL}/alumnos/byConsulta/${consulta}`,
         LOGIN: `${BASE_URL}/alumnos/login`
     },
     DOCENTES: {
+        FIND_ALL: `${BASE_URL}/docentes`,
+        FIND_ONE: (id: string) => `${BASE_URL}/docentes/${id}`,
+        ADD: `${BASE_URL}/docentes`,
+        UPDATE: (id: string) => `${BASE_URL}/docentes/${id}`,
+        PATCH: (id: string) => `${BASE_URL}/docentes/${id}`,
+        DELETE: (id: string) => `${BASE_URL}/docentes/${id}`,
+        FIND_BY_CORREO: (correo: string) => `${BASE_URL}/docentes/byCorreo/${correo}`,
         LOGIN: `${BASE_URL}/docentes/login`
     },
     MATERIAS: {
