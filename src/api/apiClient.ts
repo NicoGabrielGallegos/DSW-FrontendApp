@@ -14,6 +14,9 @@ async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH
         "Content-Type": "application/json"
     }
 
+    console.log(url);
+    
+
     // Intentar recuperar los recursos
     try {
         const response = await fetch(url, {

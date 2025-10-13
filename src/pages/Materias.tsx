@@ -32,7 +32,7 @@ export default function Materias() {
         }
     }
 
-    async function fetchMaterias(docente: string = "") {
+    async function fetchMaterias(docente: string = "", ) {
         try {
             let route: string
             if (docente === "") {
@@ -40,8 +40,14 @@ export default function Materias() {
             } else {
                 route = API_ROUTES.MATERIAS.FIND_BY_DOCENTE(docente)
             }
-            const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
-            res.data.sort((a: Materia, b: Materia) => a.descripcion < b.descripcion ? -1 : 1)
+            
+            let params: {p?: string, l?: string} = {}
+            let page = searchParams.get("p")
+            if (page) params.p = page
+            let limit = searchParams.get("l")
+            if (limit) params.l = limit
+
+            const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
             setMaterias(res.data)
         } catch (err: any) {
             setError(err.message)
