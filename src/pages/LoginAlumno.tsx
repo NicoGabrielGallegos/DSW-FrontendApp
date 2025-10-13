@@ -66,7 +66,7 @@ export default function LoginAlumno() {
                             <Box sx={{ width: "100%", display: 'flex', alignItems: 'flex-end' }}>
                                 <Icon sx={{ color: 'action.active', mr: 1, my: 0.5 }}>key</Icon>
                                 <FormControl variant="standard" fullWidth>
-                                    <InputLabel htmlFor="contraseña">Password</InputLabel>
+                                    <InputLabel htmlFor="contraseña">Contraseña</InputLabel>
                                     <Input
                                         id="contraseña"
                                         type={showPassword ? 'text' : 'password'}

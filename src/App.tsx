@@ -10,6 +10,8 @@ import Materias from './pages/Materias.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import { PrivateRoute } from './components/PrivateRouter.tsx'
 import { AuthProvider } from './context/AuthContext.tsx'
+import Docentes from './pages/Docentes.tsx'
+import Consultas from './pages/Consultas.tsx'
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
           <Route path="dashboard">
             <Route index element={<PrivateRoute redirectTo="/login/alumnos"><Dashboard /></PrivateRoute>} />
             <Route path="materias" element={<PrivateRoute redirectTo="/login/alumnos"><Materias /></PrivateRoute>} />
+            <Route path="docentes" element={<PrivateRoute redirectTo="/login/alumnos"><Docentes /></PrivateRoute>} />
+            <Route path="consultas" element={<PrivateRoute redirectTo="/login/alumnos"><Consultas /></PrivateRoute>} />
           </Route>
           <Route path="admin" element={<AdminPanel />}>
             <Route path="alumnos" element={<DataTable />} />

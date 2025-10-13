@@ -24,12 +24,12 @@ export function MateriaCardSkeleton() {
                     </Grid>
                     <Grid size={{ xs: 12, md: 4, lg: 6 }}>
                         <Grid container>
-                            <Grid size={{ xs: 6, md: 12, lg: 6 }}>
+                            <Grid size={{ xs: 6, md: 12, lg: "grow" }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
                                     <Skeleton width={110} />
                                 </CardActions>
                             </Grid>
-                            <Grid size={{ xs: 6, md: 12, lg: 6 }}>
+                            <Grid size={{ xs: 6, md: 12, lg: "auto" }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
                                     <Skeleton width={110} />
                                 </CardActions>
