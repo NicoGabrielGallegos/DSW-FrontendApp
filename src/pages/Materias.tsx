@@ -13,6 +13,7 @@ import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
+import TablePagination from "@mui/material/TablePagination";
 
 export default function Materias() {
     const [materias, setMaterias] = useState<Materia[]>([])
@@ -21,6 +22,28 @@ export default function Materias() {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
     const [searchParams, setSearchParams] = useSearchParams()
+    const [limit, setLimit] = useState(5)
+    const [page, setPage] = useState(0)
+    const [count, setCount] = useState(1)
+    let limitOptions = [5, 10, 15, 20, 25]
+
+    function setVariablesFromParams() {
+        let page: number
+        try {
+            page = parseInt(searchParams.get("p")?.toString() || "") || 1
+            setPage(page < 1 ? 0 : page - 1)
+        } catch (err) {
+            setPage(0)
+        }
+
+        let limit: number
+        try {
+            limit = parseInt(searchParams.get("l")?.toString() || "") || 0
+            setLimit(limit < 0 || !limitOptions.includes(limit) ? 5 : limit)
+        } catch (err) {
+            setLimit(5)
+        }
+    }
 
     async function fetchDocentes() {
         try {
@@ -32,7 +55,7 @@ export default function Materias() {
         }
     }
 
-    async function fetchMaterias(docente: string = "", ) {
+    async function fetchMaterias(docente: string = "",) {
         try {
             let route: string
             if (docente === "") {
@@ -40,8 +63,8 @@ export default function Materias() {
             } else {
                 route = API_ROUTES.MATERIAS.FIND_BY_DOCENTE(docente)
             }
-            
-            let params: {p?: string, l?: string} = {}
+
+            let params: { p?: string, l?: string } = {}
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
@@ -49,6 +72,7 @@ export default function Materias() {
 
             const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
             setMaterias(res.data)
+            setCount(res.total)
         } catch (err: any) {
             setError(err.message)
         }
@@ -56,6 +80,7 @@ export default function Materias() {
 
     useEffect(() => {
         async function initPage() {
+            setVariablesFromParams()
             const docenteParam = searchParams.get("docente")
             if (docenteParam) {
                 setSelectedDocente(docenteParam)
@@ -83,6 +108,21 @@ export default function Materias() {
             setSearchParams({})
         }
     }
+
+    const handleChangePage = (_event: unknown, newPage: number) => {
+        setPage(newPage);
+        searchParams.set("p", (newPage + 1).toString())
+        setSearchParams(searchParams)
+        fetchMaterias()
+    };
+
+    const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLimit(parseInt(event.target.value));
+        setPage(0);
+        searchParams.set("l", event.target.value)
+        setSearchParams(searchParams)
+        fetchMaterias()
+    };
 
     let content = <></>
 
@@ -145,6 +185,15 @@ export default function Materias() {
             </Grid>
             <Divider sx={{ my: 3 }}></Divider>
             {content}
+            <TablePagination
+                rowsPerPageOptions={limitOptions}
+                component="div"
+                count={count}
+                rowsPerPage={limit}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeLimit}
+            />
         </ResponsiveDrawer>
     )
 }

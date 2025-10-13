@@ -1,0 +1,142 @@
+import { useEffect, useState } from "react"
+import type { Materia } from "../../types/Materia.ts"
+import { API_ROUTES } from "../../api/endpoints.ts"
+import { useSearchParams } from "react-router"
+import { apiClient } from "../../api/apiClient.ts"
+import TextField from "@mui/material/TextField"
+import IconButton from "@mui/material/IconButton"
+import Icon from "@mui/material/Icon"
+import Grid from "@mui/material/Grid"
+import Typography from "@mui/material/Typography"
+import Divider from "@mui/material/Divider"
+import Table from "@mui/material/Table"
+import TableContainer from "@mui/material/TableContainer"
+import Paper from "@mui/material/Paper"
+import TableHead from "@mui/material/TableHead"
+import TableBody from "@mui/material/TableBody"
+import TableRow from "@mui/material/TableRow"
+import TableCell from "@mui/material/TableCell"
+import TablePagination from "@mui/material/TablePagination"
+
+export default function MateriasCRUD() {
+    const [materias, setMaterias] = useState<Materia[]>([])
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [limit, setLimit] = useState(10)
+    const [page, setPage] = useState(0)
+    const [count, setCount] = useState(1)
+
+    async function fetchMaterias() {
+        console.log(page, count);
+
+        try {
+            let params: { p?: string, l?: string } = {}
+            let page = searchParams.get("p")
+            if (page) params.p = page
+            let limit = searchParams.get("l")
+            if (limit) params.l = limit
+
+            const res = await apiClient.get(API_ROUTES.MATERIAS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
+            setMaterias(res.data)
+            setCount(res.total)
+        } catch (err: any) {
+            setError(err.message)
+        }
+    }
+
+    async function createMateria() {
+        const body = { descripcion: (document.getElementById("descripcion") as HTMLInputElement).value }
+
+        if (!body.descripcion) return
+        try {
+            const res = await apiClient.post(API_ROUTES.MATERIAS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
+            console.log(res.message);
+            setError(null)
+        } catch (err: any) {
+            setError(err.message)
+            throw err
+        } finally {
+            fetchMaterias()
+        }
+    }
+
+    async function deleteMateria(id: string) {
+        try {
+            const res = await apiClient.delete(API_ROUTES.MATERIAS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+        } catch (err: any) {
+            setError(err.message)
+            throw err
+        } finally {
+            fetchMaterias()
+        }
+    }
+
+    useEffect(() => {
+        searchParams.set("p", "1")
+        searchParams.set("l", "10")
+        fetchMaterias()
+        setLoading(false)
+    }, [])
+
+    const handleChangePage = (_event: unknown, newPage: number) => {
+        setPage(newPage);
+        searchParams.set("p", (newPage + 1).toString())
+        setSearchParams(searchParams)
+        fetchMaterias()
+    };
+
+    const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLimit(parseInt(event.target.value));
+        setPage(0);
+        searchParams.set("l", event.target.value)
+        setSearchParams(searchParams)
+        fetchMaterias()
+    };
+
+    return (
+        <>
+            {error}
+            <TableContainer component={Paper}>
+                <Table size={"small"}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Id</TableCell>
+                            <TableCell>Descripcion</TableCell>
+                            <TableCell>Acciones</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {materias.map((materia, idx) => {
+                            return (
+                                <TableRow key={idx}>
+                                    <TableCell>{materia._id}</TableCell>
+                                    <TableCell>{materia.descripcion}</TableCell>
+                                    <TableCell>
+                                        <IconButton onClick={() => deleteMateria(materia._id)} size="small"><Icon color="action">delete</Icon></IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                        <TableRow>
+                            <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
+                            <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth /></TableCell>
+                            <TableCell>
+                                <IconButton onClick={createMateria} size="small"><Icon color="primary">add</Icon></IconButton>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 15, 20, 25]}
+                component="div"
+                count={count}
+                rowsPerPage={limit}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeLimit}
+            />
+        </>
+    )
+}
