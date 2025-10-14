@@ -13,6 +13,7 @@ import { AuthProvider } from './context/AuthContext.tsx'
 import Docentes from './pages/Docentes.tsx'
 import Consultas from './pages/Consultas.tsx'
 import MateriasCRUD from './pages/admin/MateriasCRUD.tsx'
+import DocentesCRUD from './pages/admin/DocentesCRUD.tsx'
 
 function App() {
   return (
@@ -36,8 +37,8 @@ function App() {
             <Route path="consultas" element={<PrivateRoute redirectTo="/login/alumnos"><Consultas /></PrivateRoute>} />
           </Route>
           <Route path="admin" element={<AdminPanel />}>
-            <Route path="alumnos" element={<DataTable />} />
-            <Route path="docentes" element={<>CRUD Docentes</>} />
+            <Route path="alumnos" element={<></>} />
+            <Route path="docentes" element={<DocentesCRUD />} />
             <Route path="materias" element={<MateriasCRUD />} />
             <Route path="dictados" element={<>CRUD Dictados</>} />
             <Route path="inscripciones" element={<>CRUD Inscripciones</>} />

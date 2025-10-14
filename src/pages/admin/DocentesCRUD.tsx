@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { Materia } from "../../types/Materia.ts"
+import type { Docente } from "../../types/Docente.ts"
 import { API_ROUTES } from "../../api/endpoints.ts"
 import { useSearchParams } from "react-router"
 import { apiClient } from "../../api/apiClient.ts"
@@ -16,15 +16,15 @@ import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 
-export default function MateriasCRUD() {
-    const [materias, setMaterias] = useState<Materia[]>([])
+export default function DocentesCRUD() {
+    const [docentes, setDocentes] = useState<Docente[]>([])
     const [error, setError] = useState(null)
     const [searchParams, setSearchParams] = useSearchParams()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
 
-    async function fetchMaterias() {
+    async function fetchDocentes() {
         console.log(page, count);
 
         try {
@@ -34,52 +34,57 @@ export default function MateriasCRUD() {
             let limit = searchParams.get("l")
             if (limit) params.l = limit
 
-            const res = await apiClient.get(API_ROUTES.MATERIAS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
-            setMaterias(res.data)
+            const res = await apiClient.get(API_ROUTES.DOCENTES.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
+            setDocentes(res.data)
             setCount(res.total)
         } catch (err: any) {
             setError(err.message)
         }
     }
 
-    async function createMateria() {
-        const body = { descripcion: (document.getElementById("descripcion") as HTMLInputElement).value }
+    async function createDocente() {
+        const body = {
+            legajo: (document.getElementById("legajo") as HTMLInputElement).value,
+            nombre: (document.getElementById("nombre") as HTMLInputElement).value,
+            apellido: (document.getElementById("apellido") as HTMLInputElement).value,
+            correo: (document.getElementById("correo") as HTMLInputElement).value
+        }
 
-        if (!body.descripcion) return
+        if (!body.legajo || !body.nombre || !body.apellido || !body.correo) return
         try {
-            const res = await apiClient.post(API_ROUTES.MATERIAS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
+            const res = await apiClient.post(API_ROUTES.DOCENTES.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
             console.log(res.message);
             setError(null)
         } catch (err: any) {
             setError(err.message)
             throw err
         } finally {
-            fetchMaterias()
+            fetchDocentes()
         }
     }
 
-    async function deleteMateria(id: string) {
+    async function deleteDocente(id: string) {
         try {
-            const res = await apiClient.delete(API_ROUTES.MATERIAS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            const res = await apiClient.delete(API_ROUTES.DOCENTES.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
         } catch (err: any) {
             setError(err.message)
             throw err
         } finally {
-            fetchMaterias()
+            fetchDocentes()
         }
     }
 
     useEffect(() => {
         searchParams.set("p", "1")
         searchParams.set("l", "10")
-        fetchMaterias()
+        fetchDocentes()
     }, [])
 
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
         setSearchParams(searchParams)
-        fetchMaterias()
+        fetchDocentes()
     };
 
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +92,7 @@ export default function MateriasCRUD() {
         setPage(0);
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams)
-        fetchMaterias()
+        fetchDocentes()
     };
 
     return (
@@ -98,27 +103,36 @@ export default function MateriasCRUD() {
                     <TableHead>
                         <TableRow>
                             <TableCell>Id</TableCell>
-                            <TableCell>Descripcion</TableCell>
+                            <TableCell>Lejago</TableCell>
+                            <TableCell>Nombre</TableCell>
+                            <TableCell>Apellido</TableCell>
+                            <TableCell>Correo</TableCell>
                             <TableCell>Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {materias.map((materia, idx) => {
+                        {docentes.map((docente, idx) => {
                             return (
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{materia._id}</Typography></TableCell>
-                                    <TableCell>{materia.descripcion}</TableCell>
+                                    <TableCell><Typography variant="subtitle2">{docente._id}</Typography></TableCell>
+                                    <TableCell>{docente.legajo}</TableCell>
+                                    <TableCell>{docente.nombre}</TableCell>
+                                    <TableCell>{docente.apellido}</TableCell>
+                                    <TableCell>{docente.correo}</TableCell>
                                     <TableCell>
-                                        <IconButton onClick={() => deleteMateria(materia._id)} size="small"><Icon color="action">delete</Icon></IconButton>
+                                        <IconButton onClick={() => deleteDocente(docente._id)} size="small"><Icon color="action">delete</Icon></IconButton>
                                     </TableCell>
                                 </TableRow>
                             )
                         })}
                         <TableRow>
                             <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
-                            <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth /></TableCell>
+                            <TableCell><TextField id="legajo" variant="standard" size="small" fullWidth /></TableCell>
+                            <TableCell><TextField id="nombre" variant="standard" size="small" fullWidth /></TableCell>
+                            <TableCell><TextField id="apellido" variant="standard" size="small" fullWidth /></TableCell>
+                            <TableCell><TextField id="correo" variant="standard" size="small" fullWidth /></TableCell>
                             <TableCell>
-                                <IconButton onClick={createMateria} size="small"><Icon color="primary">add</Icon></IconButton>
+                                <IconButton onClick={createDocente} size="small"><Icon color="primary">add</Icon></IconButton>
                             </TableCell>
                         </TableRow>
                     </TableBody>

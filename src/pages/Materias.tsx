@@ -65,8 +65,9 @@ export default function Materias() {
         }
     }
 
-    async function fetchMaterias(docente: string = "",) {
+    async function fetchMaterias() {
         try {
+            let docente = searchParams.get("docente") || ""
             let route: string
             if (docente === "") {
                 route = API_ROUTES.MATERIAS.FIND_ALL
@@ -79,6 +80,9 @@ export default function Materias() {
             if (page) params.p = page
             let limit = searchParams.get("l")
             if (limit) params.l = limit
+
+            console.log(page, limit);
+            
 
             const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
             setMaterias(res.data)
@@ -94,7 +98,7 @@ export default function Materias() {
             searchParams.set("p", (page + 1).toString())
             searchParams.set("l", limit.toString())
             setSearchParams(searchParams)
-            await fetchMaterias(searchParams.get("docente") || "")
+            await fetchMaterias()
             await fetchDocentes()
             setLoading(false)
         }
@@ -103,7 +107,7 @@ export default function Materias() {
 
     useEffect(() => {
         async function reloadMaterias() {
-            await fetchMaterias(valueDocente?.id || "")
+            await fetchMaterias()
         }
         reloadMaterias()
     }, [valueDocente])
@@ -114,7 +118,8 @@ export default function Materias() {
             setSearchParams(searchParams)
             setValueDocente(value)
         } else {
-            setSearchParams({})
+            searchParams.delete("docente")
+            setSearchParams(searchParams)
             setValueDocente(null)
         }
     }
@@ -130,6 +135,7 @@ export default function Materias() {
         setLimit(parseInt(event.target.value));
         setPage(0);
         searchParams.set("l", event.target.value)
+        searchParams.set("p", "1")
         setSearchParams(searchParams)
         fetchMaterias()
     };
