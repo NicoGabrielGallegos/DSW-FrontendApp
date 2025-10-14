@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
+import { useNavigate } from 'react-router';
 
 export function MateriaCardSkeleton() {
     return (
@@ -43,6 +44,15 @@ export function MateriaCardSkeleton() {
 }
 
 export default function MateriaCard({ id, nombreMateria, options }: { id: string, nombreMateria: string, options?: { docente?: string } }) {
+    const navigate = useNavigate()
+
+    const handleVerDocentes = () => {
+        navigate(`/dashboard/docentes?materia=${id}`)
+    }
+
+    const handleVerConsultas = () => {
+        navigate(`/dashboard/consultas?materia=${id}${options && options.docente ? `&docente=${options.docente}` : ""}`)
+    }
     return (
         <Card elevation={3}>
             <CardContent sx={{
@@ -62,12 +72,12 @@ export default function MateriaCard({ id, nombreMateria, options }: { id: string
                         <Grid container alignItems={"center"}>
                             <Grid size={{ xs: 6, md: 12, lg: "grow" }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Button size="small" sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver docentes</Button>
+                                    <Button size="small" onClick={handleVerDocentes} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver docentes</Button>
                                 </CardActions>
                             </Grid>
                             <Grid size={{ xs: 6, md: 12, lg: "auto" }}>
                                 <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Button size="small" sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>{options && options.docente && "Ver consultas del docente" || "Ver consultas"}</Button>
+                                    <Button size="small" onClick={handleVerConsultas} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>{options && options.docente && "Ver consultas del docente" || "Ver consultas"}</Button>
                                 </CardActions>
                             </Grid>
                         </Grid>

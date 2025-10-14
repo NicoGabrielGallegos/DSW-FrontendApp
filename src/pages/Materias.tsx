@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
 import Typography from "@mui/material/Typography";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import Icon from "@mui/material/Icon";
 import Divider from "@mui/material/Divider";
@@ -14,14 +12,21 @@ import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
 import TablePagination from "@mui/material/TablePagination";
+import ControlledAutocomplete from "../components/ControlledAutocomplete.tsx";
 
 export default function Materias() {
+    // Colecciones de materias y docentes
     const [materias, setMaterias] = useState<Materia[]>([])
     const [docentes, setDocentes] = useState<Docente[]>([])
-    const [selectedDocente, setSelectedDocente] = useState<string>("")
+    // Variables para el selector de docente
+    const [valueDocente, setValueDocente] = useState<{ id: string, label: string } | null>(null)
+    const [inputDocente, setInputDocente] = useState<string>("")
+    // Variables de control sobre cargas y errores
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
+    // Hook para utilizar parámetros desde la URL
     const [searchParams, setSearchParams] = useSearchParams()
+    // Variables para la paginación
     const [limit, setLimit] = useState(5)
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
@@ -50,6 +55,11 @@ export default function Materias() {
             const res = await apiClient.get(API_ROUTES.DOCENTES.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
             res.data.sort((a: Docente, b: Docente) => `${a.apellido} ${a.nombre}` < `${b.apellido} ${b.nombre}` ? -1 : 1)
             setDocentes(res.data)
+            setValueDocente(() => {
+                let docente = res.data.find((docente: Docente) => docente._id === searchParams.get("docente"))
+                if (!docente) return null
+                return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` }
+            })
         } catch (err: any) {
             setError(err.message)
         }
@@ -81,11 +91,10 @@ export default function Materias() {
     useEffect(() => {
         async function initPage() {
             setVariablesFromParams()
-            const docenteParam = searchParams.get("docente")
-            if (docenteParam) {
-                setSelectedDocente(docenteParam)
-            }
-            await fetchMaterias(docenteParam || "")
+            searchParams.set("p", (page + 1).toString())
+            searchParams.set("l", limit.toString())
+            setSearchParams(searchParams)
+            await fetchMaterias(searchParams.get("docente") || "")
             await fetchDocentes()
             setLoading(false)
         }
@@ -94,18 +103,19 @@ export default function Materias() {
 
     useEffect(() => {
         async function reloadMaterias() {
-            await fetchMaterias(selectedDocente)
+            await fetchMaterias(valueDocente?.id || "")
         }
         reloadMaterias()
-    }, [selectedDocente])
+    }, [valueDocente])
 
     const onSelectDocente = (_event: any, value: any) => {
         if (value) {
-            setSelectedDocente(value.id)
-            setSearchParams({ docente: value.id })
+            searchParams.set("docente", value.id)
+            setSearchParams(searchParams)
+            setValueDocente(value)
         } else {
-            setSelectedDocente("")
             setSearchParams({})
+            setValueDocente(null)
         }
     }
 
@@ -150,7 +160,7 @@ export default function Materias() {
                 {materias.map((materia, idx) => {
                     return (
                         <Grid size={12} key={idx}>
-                            <MateriaCard id={materia._id} nombreMateria={materia.descripcion} options={{ docente: selectedDocente }} />
+                            <MateriaCard id={materia._id} nombreMateria={materia.descripcion} options={{ docente: valueDocente?.id || "" }} />
                         </Grid>
                     )
                 })}
@@ -172,15 +182,17 @@ export default function Materias() {
                     </IconButton>
                 </Grid>
                 <Grid size={"grow"}>
-                    <Autocomplete
+                    <ControlledAutocomplete
                         id="docente"
-                        disablePortal
                         options={docentes.map(docente => { return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` } })}
-                        renderInput={(params) => <TextField {...params} label="Docente" size="small" />}
-                        sx={{ maxWidth: 300 }}
+                        label="Docente"
+                        value={valueDocente}
                         onChange={onSelectDocente}
+                        inputValue={inputDocente}
+                        onInputChange={(_event: any, newInputValue: any) => {
+                            setInputDocente(newInputValue);
+                        }}
                     />
-
                 </Grid>
             </Grid>
             <Divider sx={{ my: 3 }}></Divider>

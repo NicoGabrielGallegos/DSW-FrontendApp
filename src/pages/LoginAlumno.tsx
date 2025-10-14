@@ -21,6 +21,8 @@ import { useAuth } from "../context/AuthContext.tsx";
 
 export default function LoginAlumno() {
     const [showPassword, setShowPassword] = useState(false);
+    const [correoError, setCorreoError] = useState(false)
+    const [passwordError, setPasswordError] = useState(false)
     const auth = useAuth()
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -33,6 +35,8 @@ export default function LoginAlumno() {
         event.preventDefault();
     };
 
+    const setError = (value: boolean) => { setCorreoError(value); setPasswordError(value) }
+
     const handleLogin = async () => {
         const correo = (document.getElementById("correo") as HTMLInputElement).value
         const password = (document.getElementById("contraseña") as HTMLInputElement).value
@@ -42,6 +46,7 @@ export default function LoginAlumno() {
             localStorage.setItem("token", token)
             auth.login(token)
         } catch (err: any) {
+            setError(true)
             console.log(err.message);
         }
     }
@@ -59,13 +64,13 @@ export default function LoginAlumno() {
                         <Grid size={12} p={2} pb={0}>
                             <Box sx={{ width: "100%", display: 'flex', alignItems: 'flex-end' }}>
                                 <Icon sx={{ color: 'action.active', mr: 1, my: 0.5 }}>mail</Icon>
-                                <TextField id="correo" label="Correo" variant="standard" size="small" fullWidth />
+                                <TextField error={correoError} id="correo" label="Correo" variant="standard" size="small" fullWidth onFocus={() => setCorreoError(false)} />
                             </Box>
                         </Grid>
                         <Grid size={12} p={2}>
                             <Box sx={{ width: "100%", display: 'flex', alignItems: 'flex-end' }}>
                                 <Icon sx={{ color: 'action.active', mr: 1, my: 0.5 }}>key</Icon>
-                                <FormControl variant="standard" fullWidth>
+                                <FormControl variant="standard" fullWidth error={passwordError}>
                                     <InputLabel htmlFor="contraseña">Contraseña</InputLabel>
                                     <Input
                                         id="contraseña"
@@ -84,6 +89,7 @@ export default function LoginAlumno() {
                                                 </IconButton>
                                             </InputAdornment>
                                         }
+                                        onFocus={() => setPasswordError(false)}
                                     />
                                 </FormControl>
                             </Box>
