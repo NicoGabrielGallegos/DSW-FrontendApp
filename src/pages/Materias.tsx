@@ -97,7 +97,7 @@ export default function Materias() {
             setVariablesFromParams()
             searchParams.set("p", (page + 1).toString())
             searchParams.set("l", limit.toString())
-            setSearchParams(searchParams)
+            setSearchParams(searchParams, {replace: true})
             await fetchMaterias()
             await fetchDocentes()
             setLoading(false)
@@ -115,11 +115,11 @@ export default function Materias() {
     const onSelectDocente = (_event: any, value: any) => {
         if (value) {
             searchParams.set("docente", value.id)
-            setSearchParams(searchParams)
+            setSearchParams(searchParams, {replace: true})
             setValueDocente(value)
         } else {
             searchParams.delete("docente")
-            setSearchParams(searchParams)
+            setSearchParams(searchParams, {replace: true})
             setValueDocente(null)
         }
     }
@@ -127,7 +127,7 @@ export default function Materias() {
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, {replace: true})
         fetchMaterias()
     };
 
@@ -136,7 +136,7 @@ export default function Materias() {
         setPage(0);
         searchParams.set("l", event.target.value)
         searchParams.set("p", "1")
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, {replace: true})
         fetchMaterias()
     };
 

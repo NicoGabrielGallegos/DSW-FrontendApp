@@ -15,10 +15,12 @@ import TableBody from "@mui/material/TableBody"
 import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
+import Alert from "@mui/material/Alert"
 
 export default function DocentesCRUD() {
     const [docentes, setDocentes] = useState<Docente[]>([])
-    const [error, setError] = useState(null)
+    const [message, setMessage] = useState<string | null>(null)
+    const [severity, setSeverity] = useState<"success" | "error">("success")
     const [searchParams, setSearchParams] = useSearchParams()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
@@ -38,7 +40,8 @@ export default function DocentesCRUD() {
             setDocentes(res.data)
             setCount(res.total)
         } catch (err: any) {
-            setError(err.message)
+            setMessage(err.message)
+            setSeverity("error")
         }
     }
 
@@ -47,17 +50,30 @@ export default function DocentesCRUD() {
             legajo: (document.getElementById("legajo") as HTMLInputElement).value,
             nombre: (document.getElementById("nombre") as HTMLInputElement).value,
             apellido: (document.getElementById("apellido") as HTMLInputElement).value,
-            correo: (document.getElementById("correo") as HTMLInputElement).value
+            correo: (document.getElementById("correo") as HTMLInputElement).value,
+            password: ""
+        }
+        body.password = `${body.nombre[0]}${body.apellido[0]}${body.legajo}`.toLowerCase()
+
+        if (!body.legajo || !body.nombre || !body.apellido || !body.correo) {
+            let err = "Campos incompletos: "
+            Object.keys(body).forEach(key => {
+                if (!body[key as keyof typeof body]) {
+                    err += key + ", "
+                }
+            })
+            setMessage(err.slice(0, -2))
+            setSeverity("error")
+            return
         }
 
-        if (!body.legajo || !body.nombre || !body.apellido || !body.correo) return
         try {
             const res = await apiClient.post(API_ROUTES.DOCENTES.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
-            console.log(res.message);
-            setError(null)
+            setMessage(`${res.message}: ${res.data.legajo}, ${res.data.nombre} ${res.data.apellido}`)
+            setSeverity("success")
         } catch (err: any) {
-            setError(err.message)
-            throw err
+            setMessage(err.message)
+            setSeverity("error")
         } finally {
             fetchDocentes()
         }
@@ -66,8 +82,11 @@ export default function DocentesCRUD() {
     async function deleteDocente(id: string) {
         try {
             const res = await apiClient.delete(API_ROUTES.DOCENTES.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            setMessage(`${res.message}: ${res.data.legajo}, ${res.data.nombre} ${res.data.apellido}`)
+            setSeverity("success")
         } catch (err: any) {
-            setError(err.message)
+            setMessage(err.message)
+            setSeverity("error")
             throw err
         } finally {
             fetchDocentes()
@@ -83,7 +102,7 @@ export default function DocentesCRUD() {
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, {replace: true})
         fetchDocentes()
     };
 
@@ -91,13 +110,15 @@ export default function DocentesCRUD() {
         setLimit(parseInt(event.target.value));
         setPage(0);
         searchParams.set("l", event.target.value)
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, {replace: true})
         fetchDocentes()
     };
 
     return (
         <>
-            {error}
+            {message && <Alert severity={severity} sx={{ mb: 2 }} onClose={() => setMessage(null)}>
+                {message}
+            </Alert>}
             <TableContainer component={Paper}>
                 <Table size={"small"}>
                     <TableHead>
@@ -147,6 +168,12 @@ export default function DocentesCRUD() {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeLimit}
             />
+            <Typography fontSize={12}>
+                * Al crear un nuevo docente, la contraseña será asignada automáticamente tomando la primera letra del nombre, la primera letra del apellido y el legajo, ambas letras en minúsculas
+            </Typography>
+            <Typography fontSize={12}>
+                Ej.: para el docente "Adrían Meca" con legajo "61555", la contraseña automática será "am61555"
+            </Typography>
         </>
     )
 }

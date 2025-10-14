@@ -15,10 +15,12 @@ import TableBody from "@mui/material/TableBody"
 import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
+import Alert from "@mui/material/Alert"
 
 export default function MateriasCRUD() {
     const [materias, setMaterias] = useState<Materia[]>([])
-    const [error, setError] = useState(null)
+    const [message, setMessage] = useState<string | null>(null)
+    const [severity, setSeverity] = useState<"success" | "error">("success")
     const [searchParams, setSearchParams] = useSearchParams()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
@@ -38,32 +40,39 @@ export default function MateriasCRUD() {
             setMaterias(res.data)
             setCount(res.total)
         } catch (err: any) {
-            setError(err.message)
+            setMessage(err.message)
+            setSeverity("error")
         }
     }
 
     async function createMateria() {
         const body = { descripcion: (document.getElementById("descripcion") as HTMLInputElement).value }
 
-        if (!body.descripcion) return
+        if (!body.descripcion) {
+            setMessage("Campos incompletos: descripcion")
+            setSeverity("error")
+            return
+        }
         try {
             const res = await apiClient.post(API_ROUTES.MATERIAS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
-            console.log(res.message);
-            setError(null)
+            setMessage(`${res.message}: ${res.data.descripcion}`)
+            setSeverity("success")
         } catch (err: any) {
-            setError(err.message)
-            throw err
+            setMessage(err.message)
+            setSeverity("error")
         } finally {
-            fetchMaterias()
+            fetchMaterias();
         }
     }
 
     async function deleteMateria(id: string) {
         try {
             const res = await apiClient.delete(API_ROUTES.MATERIAS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            setMessage(`${res.message}: ${res.data.descripcion}`)
+            setSeverity("success")
         } catch (err: any) {
-            setError(err.message)
-            throw err
+            setMessage(err.message)
+            setSeverity("error")
         } finally {
             fetchMaterias()
         }
@@ -78,7 +87,7 @@ export default function MateriasCRUD() {
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, {replace: true})
         fetchMaterias()
     };
 
@@ -86,13 +95,15 @@ export default function MateriasCRUD() {
         setLimit(parseInt(event.target.value));
         setPage(0);
         searchParams.set("l", event.target.value)
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, {replace: true})
         fetchMaterias()
     };
 
     return (
         <>
-            {error}
+            {message && <Alert severity={severity} sx={{ mb: 2 }} onClose={() => setMessage(null)}>
+                {message}
+            </Alert>}
             <TableContainer component={Paper}>
                 <Table size={"small"}>
                     <TableHead>
