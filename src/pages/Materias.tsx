@@ -81,9 +81,6 @@ export default function Materias() {
             let limit = searchParams.get("l")
             if (limit) params.l = limit
 
-            console.log(page, limit);
-            
-
             const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
             setMaterias(res.data)
             setCount(res.total)
@@ -115,13 +112,11 @@ export default function Materias() {
     const onSelectDocente = (_event: any, value: any) => {
         if (value) {
             searchParams.set("docente", value.id)
-            setSearchParams(searchParams, {replace: true})
-            setValueDocente(value)
         } else {
             searchParams.delete("docente")
-            setSearchParams(searchParams, {replace: true})
-            setValueDocente(null)
         }
+        setValueDocente(value)
+        setSearchParams(searchParams, {replace: true})
     }
 
     const handleChangePage = (_event: unknown, newPage: number) => {

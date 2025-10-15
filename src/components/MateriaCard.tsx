@@ -68,18 +68,16 @@ export default function MateriaCard({ id, nombreMateria, options }: { id: string
                             {nombreMateria}
                         </Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, md: "grow" }}>
-                        <Grid container alignItems={"center"}>
-                            <Grid size={{ xs: 6, md: 12, lg: "grow" }}>
-                                <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Button size="small" onClick={handleVerDocentes} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver docentes</Button>
-                                </CardActions>
-                            </Grid>
-                            <Grid size={{ xs: 6, md: 12, lg: "auto" }}>
-                                <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Button size="small" onClick={handleVerConsultas} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>{options && options.docente && "Ver consultas del docente" || "Ver consultas"}</Button>
-                                </CardActions>
-                            </Grid>
+                    <Grid container size={{ xs: 12, md: "grow" }} alignItems={"center"}>
+                        <Grid size={{ xs: 6, md: 12, lg: "grow" }}>
+                            <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
+                                <Button size="small" onClick={handleVerDocentes} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver docentes</Button>
+                            </CardActions>
+                        </Grid>
+                        <Grid size={{ xs: 6, md: 12, lg: "auto" }}>
+                            <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
+                                <Button size="small" onClick={handleVerConsultas} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>{options && options.docente && "Ver consultas del docente" || "Ver consultas"}</Button>
+                            </CardActions>
                         </Grid>
                     </Grid>
                 </Grid>

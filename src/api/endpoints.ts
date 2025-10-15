@@ -20,6 +20,7 @@ export const API_ROUTES = {
         PATCH: (id: string) => `${BASE_URL}/docentes/${id}`,
         DELETE: (id: string) => `${BASE_URL}/docentes/${id}`,
         FIND_BY_CORREO: (correo: string) => `${BASE_URL}/docentes/byCorreo/${correo}`,
+        FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/docentes/byMateria/${materia}`,
         LOGIN: `${BASE_URL}/docentes/login`
     },
     MATERIAS: {
@@ -40,6 +41,22 @@ export const API_ROUTES = {
         PATCH: (id: string) => `${BASE_URL}/dictados/${id}`,
         DELETE: (id: string) => `${BASE_URL}/dictados/${id}`,
         FIND_BY_DOCENTE: (docente: string) => `${BASE_URL}/dictados/byDocente/${docente}`,
-        FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/dictados/byMateria/${materia}`
+        FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/dictados/byMateria/${materia}`,
+        FIND_ONE_BY_DOCENTE_AND_MATERIA: (docente: string, materia: string) => `${BASE_URL}/dictados/byDocente/${docente}/byMateria/${materia}`
+    },
+    CONSULTAS: {
+        FIND_ALL: `${BASE_URL}/consultas`,
+        FIND_ONE: (id: string) => `${BASE_URL}/consultas/${id}`,
+        ADD: `${BASE_URL}/consultas`,
+        UPDATE: (id: string) => `${BASE_URL}/consultas/${id}`,
+        PATCH: (id: string) => `${BASE_URL}/consultas/${id}`,
+        DELETE: (id: string) => `${BASE_URL}/consultas/${id}`,
+        FIND_BY_DICTADO: (dictado: string) => `${BASE_URL}/consultas/byDictado/${dictado}`,
+        FIND_BY_DOCENTE: (docente: string) => `${BASE_URL}/consultas/byDocente/${docente}`,
+        FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/consultas/byMateria/${materia}`,
+        FIND_IN_HORARIO: (horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/inHorario/${horaInicio}/${horaFin}`,
+        FIND_BY_DICTADO_IN_HORARIO: (dictado: string, horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/byDictado/${dictado}/inHorario/${horaInicio}/${horaFin}`,
+        FIND_BY_DOCENTE_IN_HORARIO: (docente: string, horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/byDocente/${docente}/inHorario/${horaInicio}/${horaFin}`,
+        FIND_BY_MATERIA_IN_HORARIO: (materia: string, horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/byMateria/${materia}/inHorario/${horaInicio}/${horaFin}`,
     }
 }
