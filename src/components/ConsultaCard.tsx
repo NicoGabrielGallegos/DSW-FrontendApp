@@ -20,25 +20,30 @@ export function ConsultaCardSkeleton() {
                 pl: 2,
             }}
             >
-                <Grid container alignItems={"center"}>
-                    <Grid size={{ xs: 12, md: 8, lg: 6 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
-                        <Typography variant="h5" component="div" align="inherit" sx={{ py: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                <Grid container alignItems={"center"} spacing={1}>
+                    <Grid container size={{ xs: 12, md: "grow" }} sx={{ textAlign: { xs: "center", md: "left" } }}>
+                        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ py: { xl: 2 }, pt: { md: 1, lg: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
                             <Skeleton />
-                        </Typography>
-                    </Grid>
-                    <Grid size={{ xs: 12, md: 4, lg: 6 }}>
-                        <Grid container>
-                            <Grid size={{ xs: 6, md: 12, lg: "grow" }}>
-                                <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Skeleton width={110} sx={{ py: { md: 0.5 } }} />
-                                </CardActions>
+                        </Grid>
+                        <Grid container size={{ xs: 12, xl: 5 }} alignItems={"center"} sx={{ py: { md: 1, lg: 2 }, ml: { xl: 2 }, mb: { md: 1, lg: 0 } }}>
+                            <Grid size={{ xs: 12, md: 7, lg: 4 }} >
+                                <Skeleton />
                             </Grid>
-                            <Grid size={{ xs: 6, md: 12, lg: "auto" }}>
-                                <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                    <Skeleton width={110} sx={{ py: { md: 0.5 } }} />
-                                </CardActions>
+                            <Grid container size={{ xs: 12, md: 7, lg: 4 }} justifyContent={{ xs: "center", md: "left" }}>
+                                <Grid size={{ xs: 12, sm: 6 }}>
+                                    <Skeleton />
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 6 }}>
+                                    <Skeleton />
+                                </Grid>
                             </Grid>
                         </Grid>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: "auto" }}>
+                        <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
+                            <Skeleton width={110} sx={{ mb: 0.5 }} />
+                        </CardActions>
                     </Grid>
                 </Grid>
             </CardContent>
