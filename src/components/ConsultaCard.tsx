@@ -8,7 +8,7 @@ import Skeleton from '@mui/material/Skeleton';
 import type { Materia } from '../types/Materia.ts';
 import type { Docente } from '../types/Docente.ts';
 import type { Consulta } from '../types/Consulta.ts';
-import { FormatableDate } from '../types/FormatableDate.ts';
+import { FormatedDate } from '../types/FormatedDate.ts';
 
 export function ConsultaCardSkeleton() {
     return (
@@ -51,11 +51,10 @@ export function ConsultaCardSkeleton() {
     );
 }
 
-export default function ConsultaCard({ consulta, materia, docente }: { consulta: Consulta, materia: Materia | undefined, docente: Docente | undefined }) {
-    let horaInicio = new FormatableDate(consulta.horaInicio)
-    let horaFin = new FormatableDate(consulta.horaFin)
-    
-    
+export default function ConsultaCard({ consulta, materia, docente, onClickInscribirse }: { consulta: Consulta, materia?: Materia, docente?: Docente, onClickInscribirse: (inscripcionData: { consulta?: Consulta, materia?: Materia, docente?: Docente }) => void }) {
+    let horaInicio = new FormatedDate(consulta.horaInicio)
+    let horaFin = new FormatedDate(consulta.horaFin)
+
     return (
         <Card elevation={3}>
             <CardContent sx={{
@@ -68,30 +67,35 @@ export default function ConsultaCard({ consulta, materia, docente }: { consulta:
                 <Grid container alignItems={"center"}>
                     <Grid container size={{ xs: 12, md: "grow" }} sx={{ textAlign: { xs: "center", md: "left" } }}>
                         <Grid size={{ xs: 12, xl: "auto" }}>
-                            <Typography variant="h5" component="div" align="inherit" sx={{ py: { xl: 2 }, pt: { md: 1, lg: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                            <Typography variant="h5" component="div" align="inherit" sx={{ py: { xl: 2 }, pt: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
                                 {materia?.descripcion || ""}
                             </Typography>
                         </Grid>
-                        <Grid container size={{ xs: 12, xl: "auto" }} alignItems={"center"} sx={{ py: { md: 1, lg: 2 }, ml: { xl: 2 } }}>
-                            <Grid size={{ xs: 12, md: "auto", xl: "auto" }} sx={{ mb: { md: 1, lg: 0 } }}>
-                                <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
-                                    Docente: {docente?.apellido || ""} {docente?.nombre || ""}
+                        <Grid container size={{ xs: 12, xl: "auto" }} alignItems={"center"} sx={{ py: { md: 1, lg: 2 }, ml: { xl: 2 }, mb: { md: 1, lg: 0 } }}>
+                            <Grid size={{ xs: 12, lg: "auto", xl: "auto" }} sx={{ mb: { md: 1, lg: 0 } }}>
+                                <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                                    Docente: <Typography color="textPrimary" component="span" fontSize="inherit">{docente?.apellido || ""} {docente?.nombre || ""}</Typography>
                                 </Typography>
                             </Grid>
-                            <Grid container size={{ xs: 12, lg: 6, xl: "auto" }} justifyContent={{ xs: "center", md: "left" }} ml={{ lg: 2 }}>
+                            <Grid size={{ xs: 12, md: "auto", xl: "auto" }}>
+                                <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }} ml={{ lg: 2 }}>
+                                    Fecha: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio.dateString()}</Typography>
+                                </Typography>
+                            </Grid>
+                            <Grid container size={{ xs: 12, md: 6, xl: "auto" }} justifyContent={{ xs: "center", md: "left" }} ml={{ md: 2 }}>
                                 <Grid size={{ xs: 12, sm: "auto" }}>
-                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
-                                        Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio.horas()}:{horaInicio.minutos()}</Typography>
+                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                                        Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio.timeString()}</Typography>
                                     </Typography>
                                 </Grid>
                                 <Grid size="auto" display={{ xs: "none", sm: "block" }}>
-                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
+                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
                                         &nbsp;-&nbsp;
                                     </Typography>
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: "auto" }}>
-                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
-                                        Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{horaFin.horas()}:{horaFin.minutos()}</Typography>
+                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                                        Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{horaFin.timeString()}</Typography>
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -100,7 +104,7 @@ export default function ConsultaCard({ consulta, materia, docente }: { consulta:
 
                     <Grid size={{ xs: 12, md: "auto" }}>
                         <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                            <Button size="small" onClick={() => { }} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Inscribirse</Button>
+                            <Button size="small" onClick={() => onClickInscribirse({consulta, materia, docente})} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Inscribirse</Button>
                         </CardActions>
                     </Grid>
                 </Grid>

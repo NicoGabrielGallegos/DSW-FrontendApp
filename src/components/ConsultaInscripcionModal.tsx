@@ -1,0 +1,74 @@
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import type { Consulta } from '../types/Consulta.ts';
+import type { Materia } from '../types/Materia.ts';
+import type { Docente } from '../types/Docente.ts';
+import { FormatedDate } from '../types/FormatedDate.ts';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    boxShadow: 24,
+    width: { xs: "80%" },
+    maxWidth: 800,
+    p: 4,
+};
+
+export default function ConsultaInscripcionModal({ data, open, handleClose, handleInscripcion }: { data: { consulta?: Consulta, materia?: Materia, docente?: Docente }, open: boolean, handleClose: () => void, handleInscripcion: () => void }) {
+    let horaInicio = data.consulta ? new FormatedDate(data.consulta.horaInicio) : undefined
+    let horaFin = data.consulta ? new FormatedDate(data.consulta.horaFin) : undefined
+
+    return (
+        <div>
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={open}
+                onClose={handleClose}
+                closeAfterTransition
+                slots={{ backdrop: Backdrop }}
+                slotProps={{
+                    backdrop: {
+                        timeout: 500,
+                    },
+                }}
+                keepMounted
+            >
+                <Paper sx={style}>
+                    <Typography color="textSecondary" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                        Inscripción a consulta
+                    </Typography>
+                    <Typography variant="h5" component="div" sx={{ fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                        {data.materia?.descripcion || ""}
+                    </Typography>
+                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                        Docente: <Typography color="textPrimary" component="span" fontSize="inherit">{data.docente?.apellido || ""} {data.docente?.nombre || ""}</Typography>
+                    </Typography>
+                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                        Fecha: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio?.dateString()}</Typography>
+                    </Typography>
+                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }}>
+                        Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio?.timeString()}</Typography> -
+                        Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{horaFin?.timeString()}</Typography>
+                    </Typography>
+                    <Grid container spacing={2} justifyContent={"flex-end"} rowSpacing={1} mt={1}>
+                        <Grid size={{xs: 12, sm: "auto"}}>
+                            <Button variant="outlined" color="error" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleClose}>Cancelar</Button>
+                        </Grid>
+                        <Grid size={{xs: 12, sm: "auto"}}>
+                            <Button variant="contained" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleInscripcion}>Confirmar Inscripción</Button>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </Modal>
+        </div>
+    );
+}

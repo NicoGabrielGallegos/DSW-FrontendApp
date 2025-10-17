@@ -16,6 +16,7 @@ import ControlledAutocomplete from "../components/ControlledAutocomplete.tsx";
 import TablePagination from "@mui/material/TablePagination";
 import type { Dictado } from "../types/Dictado.ts";
 import ConsultaCard, { ConsultaCardSkeleton } from "../components/ConsultaCard.tsx";
+import ConsultaInscripcionModal from "../components/ConsultaInscripcionModal.tsx";
 
 export default function Materias() {
     // Colecciones de materias, docentes y consultas
@@ -34,6 +35,9 @@ export default function Materias() {
     // Variables de control sobre cargas y errores
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
+    // Variables para el modal de inscripcion
+    const [openInscripcionModal, setOpenInscripcionModal] = useState(false);
+    const [inscripcionModalData, setInscripcionModalData] = useState<{ consulta?: Consulta, materia?: Materia, docente?: Docente }>({})
     // Hook para utilizar parámetros desde la URL
     const [searchParams, setSearchParams] = useSearchParams()
     // Variables para la paginación
@@ -183,7 +187,7 @@ export default function Materias() {
             await fetchConsultas()
         }
         reloadConsultas()
-    })
+    }, [valueFecha])
 
     const onSelectDocente = (_event: any, value: { id: string, label: string }) => {
         if (value) {
@@ -232,7 +236,7 @@ export default function Materias() {
         searchParams.set("p", (newPage + 1).toString())
         setSearchParams(searchParams, { replace: true })
         await fetchConsultas()
-    };
+    }
 
     const handleChangeLimit = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setLimit(parseInt(event.target.value));
@@ -241,7 +245,22 @@ export default function Materias() {
         searchParams.set("p", "1")
         setSearchParams(searchParams, { replace: true })
         await fetchConsultas()
-    };
+    }
+
+    const handleOpenInscripcionModal = (inscripcionData: { consulta?: Consulta, materia?: Materia, docente?: Docente }) => {
+        setInscripcionModalData(inscripcionData)
+        setOpenInscripcionModal(true)
+    }
+
+    const handleCloseInscripcionModal = () => {
+        setInscripcionModalData({});
+        (document.activeElement as HTMLElement).blur()
+        setOpenInscripcionModal(false)
+    }
+
+    const handleInscripcion = () => {
+        handleCloseInscripcionModal()
+    }
 
     let content = <></>
 
@@ -275,7 +294,7 @@ export default function Materias() {
 
                     return (
                         <Grid size={12} key={idx}>
-                            <ConsultaCard consulta={consulta} materia={materia} docente={docente} />
+                            <ConsultaCard consulta={consulta} materia={materia} docente={docente} onClickInscribirse={handleOpenInscripcionModal} />
                         </Grid>
                     )
                 })}
@@ -284,71 +303,74 @@ export default function Materias() {
     }
 
     return (
-        <ResponsiveDrawer title="Consultas">
-            <Grid container sx={{ alignItems: "center" }} spacing={2}>
-                <Grid sx={{ display: { xs: "none", lg: "inline-flex" } }}>
-                    <IconButton
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        color="inherit"
-                    >
-                        <Icon>filter_list</Icon>
-                    </IconButton>
+        <>
+            <ResponsiveDrawer title="Consultas">
+                <Grid container sx={{ alignItems: "center" }} spacing={2}>
+                    <Grid sx={{ display: { xs: "none", lg: "inline-flex" } }}>
+                        <IconButton
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            color="inherit"
+                        >
+                            <Icon>filter_list</Icon>
+                        </IconButton>
+                    </Grid>
+                    <Grid container size={{ xs: 12, lg: 10 }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <ControlledAutocomplete
+                                id="docente"
+                                options={docentes.map(docente => { return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` } })}
+                                label="Docente"
+                                value={valueDocente}
+                                onChange={onSelectDocente}
+                                inputValue={inputDocente}
+                                onInputChange={(_event: any, newInputValue: any) => {
+                                    setInputDocente(newInputValue);
+                                }}
+                                sx={{ justifyContent: "start" }}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <ControlledAutocomplete
+                                id="materia"
+                                options={materias.map(materia => { return { id: materia._id, label: materia.descripcion } })}
+                                label="Materia"
+                                value={valueMateria}
+                                onChange={onSelectMateria}
+                                inputValue={inputMateria}
+                                onInputChange={(_event: any, newInputValue: any) => {
+                                    setInputMateria(newInputValue);
+                                }}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <LocalizedDatePicker
+                                value={valueFecha}
+                                onChange={onSelectFecha}
+                                label="Fecha"
+                                clearable
+                            />
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid container size={{ xs: 12, lg: 10 }}>
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <ControlledAutocomplete
-                            id="docente"
-                            options={docentes.map(docente => { return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` } })}
-                            label="Docente"
-                            value={valueDocente}
-                            onChange={onSelectDocente}
-                            inputValue={inputDocente}
-                            onInputChange={(_event: any, newInputValue: any) => {
-                                setInputDocente(newInputValue);
-                            }}
-                            sx={{ justifyContent: "start" }}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <ControlledAutocomplete
-                            id="materia"
-                            options={materias.map(materia => { return { id: materia._id, label: materia.descripcion } })}
-                            label="Materia"
-                            value={valueMateria}
-                            onChange={onSelectMateria}
-                            inputValue={inputMateria}
-                            onInputChange={(_event: any, newInputValue: any) => {
-                                setInputMateria(newInputValue);
-                            }}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <LocalizedDatePicker
-                            value={valueFecha}
-                            onChange={onSelectFecha}
-                            label="Fecha"
-                            clearable
-                        />
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Divider sx={{ my: 3 }}></Divider>
-            {content}
-            <TablePagination
-                labelRowsPerPage="Resultados por página:"
-                labelDisplayedRows={({ from, to, count }) => {
-                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
-                }}
-                rowsPerPageOptions={limitOptions}
-                component="div"
-                count={count}
-                rowsPerPage={limit}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeLimit}
-            />
-        </ResponsiveDrawer>
+                <Divider sx={{ my: 3 }}></Divider>
+                {content}
+                <TablePagination
+                    labelRowsPerPage="Resultados por página:"
+                    labelDisplayedRows={({ from, to, count }) => {
+                        return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                    }}
+                    rowsPerPageOptions={limitOptions}
+                    component="div"
+                    count={count}
+                    rowsPerPage={limit}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeLimit}
+                />
+                <ConsultaInscripcionModal data={inscripcionModalData} open={openInscripcionModal} handleClose={handleCloseInscripcionModal} handleInscripcion={handleInscripcion} />
+            </ResponsiveDrawer>
+        </>
     )
 }
