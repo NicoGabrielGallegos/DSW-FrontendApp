@@ -53,10 +53,6 @@ export const API_ROUTES = {
         DELETE: (id: string) => `${BASE_URL}/consultas/${id}`,
         FIND_BY_DICTADO: (dictado: string) => `${BASE_URL}/consultas/byDictado/${dictado}`,
         FIND_BY_DOCENTE: (docente: string) => `${BASE_URL}/consultas/byDocente/${docente}`,
-        FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/consultas/byMateria/${materia}`,
-        FIND_IN_HORARIO: (horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/inHorario/${horaInicio}/${horaFin}`,
-        FIND_BY_DICTADO_IN_HORARIO: (dictado: string, horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/byDictado/${dictado}/inHorario/${horaInicio}/${horaFin}`,
-        FIND_BY_DOCENTE_IN_HORARIO: (docente: string, horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/byDocente/${docente}/inHorario/${horaInicio}/${horaFin}`,
-        FIND_BY_MATERIA_IN_HORARIO: (materia: string, horaInicio: string, horaFin: string) => `${BASE_URL}/consultas/byMateria/${materia}/inHorario/${horaInicio}/${horaFin}`,
+        FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/consultas/byMateria/${materia}`
     }
 }

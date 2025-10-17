@@ -26,9 +26,11 @@ export default function Materias() {
     // Variables para el selector de docente
     const [valueDocente, setValueDocente] = useState<{ id: string, label: string } | null>(null)
     const [inputDocente, setInputDocente] = useState<string>("")
-    // Variables para el selector de materias
+    // Variables para el selector de materia
     const [valueMateria, setValueMateria] = useState<{ id: string, label: string } | null>(null)
     const [inputMateria, setInputMateria] = useState<string>("")
+    // Variables para el selsector de fecha
+    const [valueFecha, setValueFecha] = useState<Date | null>(null)
     // Variables de control sobre cargas y errores
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
@@ -127,11 +129,15 @@ export default function Materias() {
                 route = API_ROUTES.CONSULTAS.FIND_ALL
             }
 
-            let params: { p?: string, l?: string } = {}
+            let params: { p?: string, l?: string, i?: string, f?: string } = {}
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
             if (limit) params.l = limit
+            let horaInicio = searchParams.get("i")
+            if (horaInicio) params.i = horaInicio
+            let horaFin = searchParams.get("f")
+            if (horaFin) params.f = horaFin
 
             const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
 
@@ -172,7 +178,14 @@ export default function Materias() {
         reloadDocentes()
     }, [valueMateria])
 
-    const onSelectDocente = (_event: any, value: any) => {
+    useEffect(() => {
+        async function reloadConsultas() {
+            await fetchConsultas()
+        }
+        reloadConsultas()
+    })
+
+    const onSelectDocente = (_event: any, value: { id: string, label: string }) => {
         if (value) {
             searchParams.set("docente", value.id)
         } else {
@@ -182,13 +195,25 @@ export default function Materias() {
         setSearchParams(searchParams, { replace: true })
     }
 
-    const onSelectMateria = (_event: any, value: any) => {
+    const onSelectMateria = (_event: any, value: { id: string, label: string }) => {
         if (value) {
             searchParams.set("materia", value.id)
         } else {
             searchParams.delete("materia")
         }
         setValueMateria(value)
+        setSearchParams(searchParams)
+    }
+
+    const onSelectFecha = (value: Date | null) => {
+        if (value) {
+            searchParams.set("i", value.toISOString())
+            searchParams.set("f", value.addDays(1).toISOString())
+        } else {
+            searchParams.delete("i")
+            searchParams.delete("f")
+        }
+        setValueFecha(value)
         setSearchParams(searchParams)
     }
 
@@ -239,7 +264,7 @@ export default function Materias() {
     } else if (consultas.length === 0) {
         let materiaMessage: string = valueMateria ? `de ${getNombreMateria(valueMateria.id)}` : ""
         let docenteMessage: string = valueDocente ? `dictadas por ${getNombreDocente(valueDocente?.id)}` : ""
-        content = <Typography variant="h5" sx={{ py: 2 }}>No hay consultas {materiaMessage} {docenteMessage} para el período de fechas dado</Typography>
+        content = <Typography variant="h5" sx={{ py: 2 }}>No hay consultas {materiaMessage} {docenteMessage} para el período de fechas seleccionado</Typography>
     } else {
         content = (
             <Grid container spacing={2}>
@@ -300,7 +325,12 @@ export default function Materias() {
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <LocalizedDatePicker label="Fecha" />
+                        <LocalizedDatePicker
+                            value={valueFecha}
+                            onChange={onSelectFecha}
+                            label="Fecha"
+                            clearable
+                        />
                     </Grid>
                 </Grid>
             </Grid>

@@ -8,6 +8,7 @@ import Skeleton from '@mui/material/Skeleton';
 import type { Materia } from '../types/Materia.ts';
 import type { Docente } from '../types/Docente.ts';
 import type { Consulta } from '../types/Consulta.ts';
+import { FormatableDate } from '../types/FormatableDate.ts';
 
 export function ConsultaCardSkeleton() {
     return (
@@ -51,6 +52,10 @@ export function ConsultaCardSkeleton() {
 }
 
 export default function ConsultaCard({ consulta, materia, docente }: { consulta: Consulta, materia: Materia | undefined, docente: Docente | undefined }) {
+    let horaInicio = new FormatableDate(consulta.horaInicio)
+    let horaFin = new FormatableDate(consulta.horaFin)
+    
+    
     return (
         <Card elevation={3}>
             <CardContent sx={{
@@ -76,7 +81,7 @@ export default function ConsultaCard({ consulta, materia, docente }: { consulta:
                             <Grid container size={{ xs: 12, lg: 6, xl: "auto" }} justifyContent={{ xs: "center", md: "left" }} ml={{ lg: 2 }}>
                                 <Grid size={{ xs: 12, sm: "auto" }}>
                                     <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
-                                        Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta.horaInicio).toLocaleTimeString().slice(0, -3)} </Typography>
+                                        Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio.horas()}:{horaInicio.minutos()}</Typography>
                                     </Typography>
                                 </Grid>
                                 <Grid size="auto" display={{ xs: "none", sm: "block" }}>
@@ -86,7 +91,7 @@ export default function ConsultaCard({ consulta, materia, docente }: { consulta:
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: "auto" }}>
                                     <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
-                                        Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta.horaFin).toLocaleTimeString().slice(0, -3)}</Typography>
+                                        Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{horaFin.horas()}:{horaFin.minutos()}</Typography>
                                     </Typography>
                                 </Grid>
                             </Grid>
