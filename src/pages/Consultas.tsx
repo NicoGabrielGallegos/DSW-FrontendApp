@@ -307,6 +307,10 @@ export default function Materias() {
             <Divider sx={{ my: 3 }}></Divider>
             {content}
             <TablePagination
+                labelRowsPerPage="Resultados por página:"
+                labelDisplayedRows={({ from, to, count }) => {
+                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                }}
                 rowsPerPageOptions={limitOptions}
                 component="div"
                 count={count}

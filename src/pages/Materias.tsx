@@ -94,7 +94,7 @@ export default function Materias() {
             setVariablesFromParams()
             searchParams.set("p", (page + 1).toString())
             searchParams.set("l", limit.toString())
-            setSearchParams(searchParams, {replace: true})
+            setSearchParams(searchParams, { replace: true })
             await fetchMaterias()
             await fetchDocentes()
             setLoading(false)
@@ -116,13 +116,13 @@ export default function Materias() {
             searchParams.delete("docente")
         }
         setValueDocente(value)
-        setSearchParams(searchParams, {replace: true})
+        setSearchParams(searchParams, { replace: true })
     }
 
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
-        setSearchParams(searchParams, {replace: true})
+        setSearchParams(searchParams, { replace: true })
         fetchMaterias()
     };
 
@@ -131,7 +131,7 @@ export default function Materias() {
         setPage(0);
         searchParams.set("l", event.target.value)
         searchParams.set("p", "1")
-        setSearchParams(searchParams, {replace: true})
+        setSearchParams(searchParams, { replace: true })
         fetchMaterias()
     };
 
@@ -199,6 +199,10 @@ export default function Materias() {
             <Divider sx={{ my: 3 }}></Divider>
             {content}
             <TablePagination
+                labelRowsPerPage="Resultados por página:"
+                labelDisplayedRows={({ from, to, count }) => {
+                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                }}
                 rowsPerPageOptions={limitOptions}
                 component="div"
                 count={count}

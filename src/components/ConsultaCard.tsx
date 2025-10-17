@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
-import { useNavigate } from 'react-router';
 import type { Materia } from '../types/Materia.ts';
 import type { Docente } from '../types/Docente.ts';
 import type { Consulta } from '../types/Consulta.ts';
@@ -52,8 +51,6 @@ export function ConsultaCardSkeleton() {
 }
 
 export default function ConsultaCard({ consulta, materia, docente }: { consulta: Consulta, materia: Materia | undefined, docente: Docente | undefined }) {
-    const navigate = useNavigate()
-
     return (
         <Card elevation={3}>
             <CardContent sx={{
@@ -72,24 +69,24 @@ export default function ConsultaCard({ consulta, materia, docente }: { consulta:
                         </Grid>
                         <Grid container size={{ xs: 12, xl: "auto" }} alignItems={"center"} sx={{ py: { md: 1, lg: 2 }, ml: { xl: 2 } }}>
                             <Grid size={{ xs: 12, md: "auto", xl: "auto" }} sx={{ mb: { md: 1, lg: 0 } }}>
-                                <Typography component="div" color="textSecondary" align="inherit" fontSize={"1rem"}>
+                                <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
                                     Docente: {docente?.apellido || ""} {docente?.nombre || ""}
                                 </Typography>
                             </Grid>
                             <Grid container size={{ xs: 12, lg: 6, xl: "auto" }} justifyContent={{ xs: "center", md: "left" }} ml={{ lg: 2 }}>
                                 <Grid size={{ xs: 12, sm: "auto" }}>
-                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={"1rem"}>
-                                        Desde: {consulta.horaInicio.split("T")[1].slice(0, -8)}
+                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
+                                        Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta.horaInicio).toLocaleTimeString().slice(0, -3)} </Typography>
                                     </Typography>
                                 </Grid>
                                 <Grid size="auto" display={{ xs: "none", sm: "block" }}>
-                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={"1rem"}>
+                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
                                         &nbsp;-&nbsp;
                                     </Typography>
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: "auto" }}>
-                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={"1rem"}>
-                                        Hasta: {consulta.horaFin.split("T")[1].slice(0, -8)}
+                                    <Typography component="div" color="textSecondary" align="inherit" fontSize={{xs: "0.8rem", md: "1rem"}}>
+                                        Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta.horaFin).toLocaleTimeString().slice(0, -3)}</Typography>
                                     </Typography>
                                 </Grid>
                             </Grid>
