@@ -5,9 +5,10 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
+import type { Consulta } from '../types/Consulta.ts';
+import type { Dictado } from '../types/Dictado.ts';
 import type { Materia } from '../types/Materia.ts';
 import type { Docente } from '../types/Docente.ts';
-import type { Consulta } from '../types/Consulta.ts';
 import { FormatedDate } from '../types/FormatedDate.ts';
 
 export function ConsultaCardSkeleton() {
@@ -51,9 +52,11 @@ export function ConsultaCardSkeleton() {
     );
 }
 
-export default function ConsultaCard({ consulta, materia, docente, onClickInscribirse }: { consulta: Consulta, materia?: Materia, docente?: Docente, onClickInscribirse: (inscripcionData: { consulta?: Consulta, materia?: Materia, docente?: Docente }) => void }) {
+export default function ConsultaCard({ consulta, onClickInscribirse }: { consulta: Consulta, onClickInscribirse: (inscripcionData: { consulta?: Consulta, materia?: Materia, docente?: Docente }) => void }) {
     let horaInicio = new FormatedDate(consulta.horaInicio)
     let horaFin = new FormatedDate(consulta.horaFin)
+    let materia = ((consulta.dictado as Dictado).materia as Materia)
+    let docente = ((consulta.dictado as Dictado).docente as Docente)
 
     return (
         <Card elevation={3}>

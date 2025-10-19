@@ -40,7 +40,7 @@ export default function DictadosCRUD() {
         console.log(page, count);
 
         try {
-            let params: { p?: string, l?: string } = {}
+            let params: { p?: string, l?: string, populate: string } = { populate: "docente,materia" }
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
@@ -74,8 +74,8 @@ export default function DictadosCRUD() {
         }
 
         try {
-            const res = await apiClient.post(API_ROUTES.DICTADOS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
-            setMessage(`${res.message}: ${getNombreDocente(res.data.docente)} -> ${getNombreMateria(res.data.materia)}`)
+            const res = await apiClient.post(API_ROUTES.DICTADOS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body, params: { populate: "docente,materia" } })
+            setMessage(`${res.message}: ${getNombreDocente(res.data)} -> ${getNombreMateria(res.data)}`)
             setSeverity("success")
         } catch (err: any) {
             setMessage(err.message)
@@ -87,8 +87,8 @@ export default function DictadosCRUD() {
 
     async function deleteDictado(id: string) {
         try {
-            const res = await apiClient.delete(API_ROUTES.DICTADOS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
-            setMessage(`${res.message}: ${getNombreDocente(res.data.docente)} -> ${getNombreMateria(res.data.materia)}`)
+            const res = await apiClient.delete(API_ROUTES.DICTADOS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}`, params: { populate: "docente,materia" } } })
+            setMessage(`${res.message}: ${getNombreDocente(res.data)} -> ${getNombreMateria(res.data)}`)
             setSeverity("success")
         } catch (err: any) {
             setMessage(err.message)
@@ -151,13 +151,13 @@ export default function DictadosCRUD() {
         setValueMateria(value)
     }
 
-    const getNombreDocente = (id :string) => {
-        let docente = docentes.find(docente => docente._id === id)
+    const getNombreDocente = (dictado: Dictado) => {
+        let docente = dictado.docente as Docente
         return docente ? `${docente.apellido} ${docente.nombre}` : ""
     }
 
-    const getNombreMateria = (id: string) => {
-        let materia = materias.find(materia => materia._id === id)
+    const getNombreMateria = (dictado: Dictado) => {
+        let materia = dictado.materia as Materia
         return materia ? materia.descripcion : ""
     }
 
@@ -182,12 +182,12 @@ export default function DictadosCRUD() {
                                 <TableRow key={idx}>
                                     <TableCell><Typography variant="subtitle2">{dictado._id}</Typography></TableCell>
                                     <TableCell>
-                                        <Typography variant="body2">{getNombreDocente(dictado.docente)}</Typography>
-                                        <Typography variant="body2" fontSize={10} color="textSecondary">{dictado.docente}</Typography>
+                                        <Typography variant="body2">{getNombreDocente(dictado)}</Typography>
+                                        <Typography variant="body2" fontSize={10} color="textSecondary">{(dictado.docente as Docente)._id}</Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="body2">{getNombreMateria(dictado.materia)}</Typography>
-                                        <Typography variant="body2" fontSize={10} color="textSecondary">{dictado.materia}</Typography>
+                                        <Typography variant="body2">{getNombreMateria(dictado)}</Typography>
+                                        <Typography variant="body2" fontSize={10} color="textSecondary">{(dictado.materia as Materia)._id}</Typography>
                                     </TableCell>
                                     <TableCell>
                                         <IconButton onClick={() => deleteDictado(dictado._id)} size="small"><Icon color="action">delete</Icon></IconButton>

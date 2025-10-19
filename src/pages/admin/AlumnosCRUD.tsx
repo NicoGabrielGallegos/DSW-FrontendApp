@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { Docente } from "../../types/Docente.ts"
+import type { Alumno } from "../../types/Alumno.ts"
 import { API_ROUTES } from "../../api/endpoints.ts"
 import { useSearchParams } from "react-router"
 import { apiClient } from "../../api/apiClient.ts"
@@ -17,8 +17,8 @@ import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 import Alert from "@mui/material/Alert"
 
-export default function DocentesCRUD() {
-    const [docentes, setDocentes] = useState<Docente[]>([])
+export default function AlumnosCRUD() {
+    const [alumnos, setAlumnos] = useState<Alumno[]>([])
     const [message, setMessage] = useState<string | null>(null)
     const [severity, setSeverity] = useState<"success" | "error">("success")
     const [searchParams, setSearchParams] = useSearchParams()
@@ -26,7 +26,7 @@ export default function DocentesCRUD() {
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
 
-    async function fetchDocentes() {
+    async function fetchAlumnos() {
         console.log(page, count);
 
         try {
@@ -36,8 +36,8 @@ export default function DocentesCRUD() {
             let limit = searchParams.get("l")
             if (limit) params.l = limit
 
-            const res = await apiClient.get(API_ROUTES.DOCENTES.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
-            setDocentes(res.data)
+            const res = await apiClient.get(API_ROUTES.ALUMNOS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
+            setAlumnos(res.data)
             setCount(res.total)
         } catch (err: any) {
             setMessage(err.message)
@@ -45,7 +45,7 @@ export default function DocentesCRUD() {
         }
     }
 
-    async function createDocente() {
+    async function createAlumno() {
         const body = {
             legajo: (document.getElementById("legajo") as HTMLInputElement).value,
             nombre: (document.getElementById("nombre") as HTMLInputElement).value,
@@ -68,20 +68,20 @@ export default function DocentesCRUD() {
         }
 
         try {
-            const res = await apiClient.post(API_ROUTES.DOCENTES.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
+            const res = await apiClient.post(API_ROUTES.ALUMNOS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
             setMessage(`${res.message}: ${res.data.legajo}, ${res.data.nombre} ${res.data.apellido}`)
             setSeverity("success")
         } catch (err: any) {
             setMessage(err.message)
             setSeverity("error")
         } finally {
-            fetchDocentes()
+            fetchAlumnos()
         }
     }
 
-    async function deleteDocente(id: string) {
+    async function deleteAlumno(id: string) {
         try {
-            const res = await apiClient.delete(API_ROUTES.DOCENTES.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            const res = await apiClient.delete(API_ROUTES.ALUMNOS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
             setMessage(`${res.message}: ${res.data.legajo}, ${res.data.nombre} ${res.data.apellido}`)
             setSeverity("success")
         } catch (err: any) {
@@ -89,21 +89,21 @@ export default function DocentesCRUD() {
             setSeverity("error")
             throw err
         } finally {
-            fetchDocentes()
+            fetchAlumnos()
         }
     }
 
     useEffect(() => {
         searchParams.set("p", "1")
         searchParams.set("l", "10")
-        fetchDocentes()
+        fetchAlumnos()
     }, [])
 
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
         setSearchParams(searchParams, {replace: true})
-        fetchDocentes()
+        fetchAlumnos()
     };
 
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +111,7 @@ export default function DocentesCRUD() {
         setPage(0);
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams, {replace: true})
-        fetchDocentes()
+        fetchAlumnos()
     };
 
     return (
@@ -132,16 +132,16 @@ export default function DocentesCRUD() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {docentes.map((docente, idx) => {
+                        {alumnos.map((alumno, idx) => {
                             return (
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{docente._id}</Typography></TableCell>
-                                    <TableCell>{docente.legajo}</TableCell>
-                                    <TableCell>{docente.nombre}</TableCell>
-                                    <TableCell>{docente.apellido}</TableCell>
-                                    <TableCell>{docente.correo}</TableCell>
+                                    <TableCell><Typography variant="subtitle2">{alumno._id}</Typography></TableCell>
+                                    <TableCell>{alumno.legajo}</TableCell>
+                                    <TableCell>{alumno.nombre}</TableCell>
+                                    <TableCell>{alumno.apellido}</TableCell>
+                                    <TableCell>{alumno.correo}</TableCell>
                                     <TableCell>
-                                        <IconButton onClick={() => deleteDocente(docente._id)} size="small"><Icon color="action">delete</Icon></IconButton>
+                                        <IconButton onClick={() => deleteAlumno(alumno._id)} size="small"><Icon color="action">delete</Icon></IconButton>
                                     </TableCell>
                                 </TableRow>
                             )
@@ -153,7 +153,7 @@ export default function DocentesCRUD() {
                             <TableCell><TextField id="apellido" variant="standard" size="small" fullWidth /></TableCell>
                             <TableCell><TextField id="correo" variant="standard" size="small" fullWidth /></TableCell>
                             <TableCell>
-                                <IconButton onClick={createDocente} size="small"><Icon color="primary">add</Icon></IconButton>
+                                <IconButton onClick={createAlumno} size="small"><Icon color="primary">add</Icon></IconButton>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -169,10 +169,10 @@ export default function DocentesCRUD() {
                 onRowsPerPageChange={handleChangeLimit}
             />
             <Typography fontSize={12}>
-                * Al crear un nuevo docente, la contraseña será asignada automáticamente tomando la primera letra del nombre, la primera letra del apellido y el legajo, ambas letras en minúsculas
+                * Al crear un nuevo alumno, la contraseña será asignada automáticamente tomando la primera letra del nombre, la primera letra del apellido y el legajo, ambas letras en minúsculas
             </Typography>
             <Typography fontSize={12}>
-                Ej.: para el docente "Adrían Meca" con legajo "61555", la contraseña automática será "am61555"
+                Ej.: para el alumno "John Doe" con legajo "50444", la contraseña automática será "jd50444"
             </Typography>
         </>
     )

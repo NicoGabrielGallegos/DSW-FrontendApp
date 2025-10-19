@@ -54,5 +54,15 @@ export const API_ROUTES = {
         FIND_BY_DICTADO: (dictado: string) => `${BASE_URL}/consultas/byDictado/${dictado}`,
         FIND_BY_DOCENTE: (docente: string) => `${BASE_URL}/consultas/byDocente/${docente}`,
         FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/consultas/byMateria/${materia}`
+    },
+    INSCRIPCIONES: {
+        FIND_ALL: `${BASE_URL}/inscripciones`,
+        FIND_ONE: (id: string) => `${BASE_URL}/inscripciones/${id}`,
+        ADD: `${BASE_URL}/inscripciones`,
+        UPDATE: (id: string) => `${BASE_URL}/inscripciones/${id}`,
+        PATCH: (id: string) => `${BASE_URL}/inscripciones/${id}`,
+        DELETE: (id: string) => `${BASE_URL}/inscripciones/${id}`,
+        FIND_BY_ALUMNO: (dictado: string) => `${BASE_URL}/inscripciones/byDictado/${dictado}`,
+        FIND_BY_CONSULTA: (consulta: string) => `${BASE_URL}/inscripciones/byConsulta/${consulta}`,
     }
 }

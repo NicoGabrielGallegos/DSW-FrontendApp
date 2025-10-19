@@ -17,13 +17,13 @@ import TablePagination from "@mui/material/TablePagination";
 import type { Dictado } from "../types/Dictado.ts";
 import ConsultaCard, { ConsultaCardSkeleton } from "../components/ConsultaCard.tsx";
 import ConsultaInscripcionModal from "../components/ConsultaInscripcionModal.tsx";
+import { decodeToken } from "../utils/auth.ts";
 
 export default function Materias() {
     // Colecciones de materias, docentes y consultas
     const [materias, setMaterias] = useState<Materia[]>([])
     const [docentes, setDocentes] = useState<Docente[]>([])
     const [consultas, setConsultas] = useState<Consulta[]>([])
-    const [dictados, setDictados] = useState<Dictado[]>([])
     // Variables para el selector de docente
     const [valueDocente, setValueDocente] = useState<{ id: string, label: string } | null>(null)
     const [inputDocente, setInputDocente] = useState<string>("")
@@ -38,6 +38,8 @@ export default function Materias() {
     // Variables para el modal de inscripcion
     const [openInscripcionModal, setOpenInscripcionModal] = useState(false);
     const [inscripcionModalData, setInscripcionModalData] = useState<{ consulta?: Consulta, materia?: Materia, docente?: Docente }>({})
+    const [doneInscripcion, setDoneInscripcion] = useState(false)
+    const [alert, setAlert] = useState<{ message?: string, severity?: "error" | "success" }>({})
     // Hook para utilizar parámetros desde la URL
     const [searchParams, setSearchParams] = useSearchParams()
     // Variables para la paginación
@@ -64,15 +66,6 @@ export default function Materias() {
         }
     }
 
-    async function fetchDictados() {
-        try {
-            const res = await apiClient.get(API_ROUTES.DICTADOS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
-            setDictados(res.data)
-        } catch (err: any) {
-            setError(err.message)
-        }
-    }
-
     async function fetchDocentes() {
         try {
             let materia = searchParams.get("materia") || ""
@@ -85,7 +78,7 @@ export default function Materias() {
             const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
             res.data.sort((a: Docente, b: Docente) => `${a.apellido} ${a.nombre}` < `${b.apellido} ${b.nombre}` ? -1 : 1)
             setDocentes(res.data)
-            setValueDocente(() => {
+            if (!valueDocente) setValueDocente(() => {
                 let docente = res.data.find((docente: Docente) => docente._id === searchParams.get("docente"))
                 if (!docente) return null
                 return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` }
@@ -106,6 +99,11 @@ export default function Materias() {
             }
             const res = await apiClient.get(route, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
             setMaterias(res.data)
+            if (!valueMateria) setValueMateria(() => {
+                let materia = res.data.find((materia: Materia) => materia._id === searchParams.get("materia"))
+                if (!materia) return null
+                return { id: materia._id, label: materia.descripcion }
+            })
         } catch (err: any) {
             setError(err.message)
         }
@@ -118,13 +116,14 @@ export default function Materias() {
             let materia = searchParams.get("materia") || ""
             let route: string
             if (docente !== "" && materia !== "") {
-                const dictadoObj: Dictado | undefined = dictados.find(dictado => dictado.docente === docente && dictado.materia === materia)
-                if (!dictadoObj) {
+                const dictado: Dictado | undefined = (await apiClient.get(API_ROUTES.DICTADOS.FIND_ONE_BY_DOCENTE_AND_MATERIA(docente, materia), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })).data
+
+                if (!dictado) {
                     setError("No existe el dictado seleccionado")
                     setConsultas([])
                     return
                 }
-                route = API_ROUTES.CONSULTAS.FIND_BY_DICTADO(dictadoObj._id)
+                route = API_ROUTES.CONSULTAS.FIND_BY_DICTADO(dictado._id)
             } else if (docente !== "") {
                 route = API_ROUTES.CONSULTAS.FIND_BY_DOCENTE(docente)
             } else if (materia !== "") {
@@ -133,7 +132,7 @@ export default function Materias() {
                 route = API_ROUTES.CONSULTAS.FIND_ALL
             }
 
-            let params: { p?: string, l?: string, i?: string, f?: string } = {}
+            let params: { p?: string, l?: string, i?: string, f?: string, populate: string } = { populate: "docente,materia" }
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
@@ -160,7 +159,6 @@ export default function Materias() {
             setSearchParams(searchParams, { replace: true })
             await fetchMaterias()
             await fetchDocentes()
-            await fetchDictados()
             setLoading(false)
         }
         initPage()
@@ -195,7 +193,7 @@ export default function Materias() {
         } else {
             searchParams.delete("docente")
         }
-        setValueDocente(value)
+        if (value !== valueDocente) setValueDocente(value)
         setSearchParams(searchParams, { replace: true })
     }
 
@@ -205,7 +203,7 @@ export default function Materias() {
         } else {
             searchParams.delete("materia")
         }
-        setValueMateria(value)
+        if (value !== valueMateria) setValueMateria(value)
         setSearchParams(searchParams)
     }
 
@@ -256,10 +254,24 @@ export default function Materias() {
         setInscripcionModalData({});
         (document.activeElement as HTMLElement).blur()
         setOpenInscripcionModal(false)
+        setDoneInscripcion(false)
+        setAlert({})
     }
 
-    const handleInscripcion = () => {
-        handleCloseInscripcionModal()
+    const handleInscripcion = async () => {
+        let body: { alumno?: string, consulta?: string } = {}
+        let payload = decodeToken(localStorage.getItem("token") || "")
+        if (payload && payload.user.rol == "alumno") body.alumno = payload.user.id
+        if (inscripcionModalData.consulta) body.consulta = inscripcionModalData.consulta._id
+
+        try {
+            const res = await apiClient.post(API_ROUTES.INSCRIPCIONES.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
+            setAlert({ message: res.message, severity: "success" })
+        } catch (err: any) {
+            setAlert({ message: err.message, severity: "error" })
+        } finally {
+            setDoneInscripcion(true)
+        }
     }
 
     let content = <></>
@@ -288,13 +300,9 @@ export default function Materias() {
         content = (
             <Grid container spacing={2}>
                 {consultas.map((consulta, idx) => {
-                    let dictado = dictados.find(dictado => dictado._id === consulta.dictado)
-                    let materia = materias.find(materia => materia._id === dictado?.materia)
-                    let docente = docentes.find(docente => docente._id === dictado?.docente)
-
                     return (
                         <Grid size={12} key={idx}>
-                            <ConsultaCard consulta={consulta} materia={materia} docente={docente} onClickInscribirse={handleOpenInscripcionModal} />
+                            <ConsultaCard consulta={consulta} onClickInscribirse={handleOpenInscripcionModal} />
                         </Grid>
                     )
                 })}
@@ -369,7 +377,7 @@ export default function Materias() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeLimit}
                 />
-                <ConsultaInscripcionModal data={inscripcionModalData} open={openInscripcionModal} handleClose={handleCloseInscripcionModal} handleInscripcion={handleInscripcion} />
+                <ConsultaInscripcionModal data={inscripcionModalData} open={openInscripcionModal} handleClose={handleCloseInscripcionModal} handleInscripcion={handleInscripcion} done={doneInscripcion} alert={alert} onCloseAlert={() => setAlert({})} />
             </ResponsiveDrawer>
         </>
     )

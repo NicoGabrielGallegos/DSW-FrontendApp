@@ -5,7 +5,6 @@ import ScheduleBooking from './pages/ScheduleBooking.tsx'
 import LoginAlumno from './pages/LoginAlumno.tsx'
 import LoginDocente from './pages/LoginDocente.tsx'
 import AdminPanel from './pages/admin/AdminPanel.tsx'
-import DataTable from './components/admin_panel/DataTable.tsx'
 import Materias from './pages/Materias.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import { PrivateRoute } from './components/PrivateRouter.tsx'
@@ -15,6 +14,7 @@ import Consultas from './pages/Consultas.tsx'
 import MateriasCRUD from './pages/admin/MateriasCRUD.tsx'
 import DocentesCRUD from './pages/admin/DocentesCRUD.tsx'
 import DictadosCRUD from './pages/admin/DictadosCRUD.tsx'
+import AlumnosCRUD from './pages/admin/AlumnosCRUD.tsx'
 
 function App() {
   return (
@@ -38,11 +38,11 @@ function App() {
             <Route path="consultas" element={<PrivateRoute redirectTo="/login/alumnos"><Consultas /></PrivateRoute>} />
           </Route>
           <Route path="admin" element={<AdminPanel />}>
-            <Route path="alumnos" element={<></>} />
+            <Route path="alumnos" element={<AlumnosCRUD />} />
             <Route path="docentes" element={<DocentesCRUD />} />
             <Route path="materias" element={<MateriasCRUD />} />
             <Route path="dictados" element={<DictadosCRUD />} />
-            <Route path="inscripciones" element={<>CRUD Inscripciones</>} />
+            <Route path="inscripciones" element={<></>} />
             <Route path="consultas" element={<>CRUD Consultas</>} />
             <Route path="calificaciones" element={<>CRUD Calificaciones</>} />
           </Route>

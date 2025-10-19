@@ -1,7 +1,5 @@
 import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import type { Consulta } from '../types/Consulta.ts';
@@ -10,6 +8,7 @@ import type { Docente } from '../types/Docente.ts';
 import { FormatedDate } from '../types/FormatedDate.ts';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
 
 const style = {
     position: 'absolute',
@@ -22,7 +21,7 @@ const style = {
     p: 4,
 };
 
-export default function ConsultaInscripcionModal({ data, open, handleClose, handleInscripcion }: { data: { consulta?: Consulta, materia?: Materia, docente?: Docente }, open: boolean, handleClose: () => void, handleInscripcion: () => void }) {
+export default function ConsultaInscripcionModal({ data, open, handleClose, handleInscripcion, done, alert, onCloseAlert }: { data: { consulta?: Consulta, materia?: Materia, docente?: Docente }, open: boolean, handleClose: () => void, handleInscripcion: () => void, done: boolean, alert: {message?: string, severity?: "error" | "success"}, onCloseAlert: () => void }) {
     let horaInicio = data.consulta ? new FormatedDate(data.consulta.horaInicio) : undefined
     let horaFin = data.consulta ? new FormatedDate(data.consulta.horaFin) : undefined
 
@@ -43,6 +42,9 @@ export default function ConsultaInscripcionModal({ data, open, handleClose, hand
                 keepMounted
             >
                 <Paper sx={style}>
+                    {alert.message && <Alert severity={alert.severity} sx={{ mb: 2 }} onClose={onCloseAlert}>
+                        {alert.message}
+                    </Alert>}
                     <Typography color="textSecondary" fontSize={{ xs: "0.8rem", md: "1rem" }}>
                         Inscripción a consulta
                     </Typography>
@@ -59,14 +61,22 @@ export default function ConsultaInscripcionModal({ data, open, handleClose, hand
                         Desde: <Typography color="textPrimary" component="span" fontSize="inherit">{horaInicio?.timeString()}</Typography> -
                         Hasta: <Typography color="textPrimary" component="span" fontSize="inherit">{horaFin?.timeString()}</Typography>
                     </Typography>
-                    <Grid container spacing={2} justifyContent={"flex-end"} rowSpacing={1} mt={1}>
-                        <Grid size={{xs: 12, sm: "auto"}}>
-                            <Button variant="outlined" color="error" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleClose}>Cancelar</Button>
+                    {done &&
+                        <Grid container spacing={2} justifyContent={"flex-end"} mt={1}>
+                            <Grid size={{ xs: 12, sm: "auto" }}>
+                                <Button variant="outlined" color="error" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleClose}>Cerrar</Button>
+                            </Grid>
                         </Grid>
-                        <Grid size={{xs: 12, sm: "auto"}}>
-                            <Button variant="contained" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleInscripcion}>Confirmar Inscripción</Button>
-                        </Grid>
-                    </Grid>
+                    }
+                    {!done &&
+                        <Grid container spacing={2} justifyContent={"flex-end"} rowSpacing={1} mt={1}>
+                            <Grid size={{ xs: 12, sm: "auto" }}>
+                                <Button variant="outlined" color="error" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleClose}>Cancelar</Button>
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: "auto" }}>
+                                <Button variant="contained" sx={{ fontSize: { xs: "0.6rem", md: "0.8rem" } }} fullWidth onClick={handleInscripcion}>Confirmar Inscripción</Button>
+                            </Grid>
+                        </Grid>}
                 </Paper>
             </Modal>
         </div>
