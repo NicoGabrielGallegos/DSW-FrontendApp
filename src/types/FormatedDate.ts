@@ -30,4 +30,7 @@ export class FormatedDate {
     dateString = () => {
         return `${this.day()}/${this.month()}/${this.year()}`
     }
+    fullString = () => {
+        return `${this.dateString()} - ${this.timeString()}`
+    }
 }

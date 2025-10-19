@@ -10,7 +10,7 @@ import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
-import type { Consulta } from "../types/Consulta.ts";
+import type { Consulta as C } from "../types/Consulta.ts";
 import LocalizedDatePicker from "../components/LocalizedDatePicker.tsx";
 import ControlledAutocomplete from "../components/ControlledAutocomplete.tsx";
 import TablePagination from "@mui/material/TablePagination";
@@ -18,6 +18,9 @@ import type { Dictado } from "../types/Dictado.ts";
 import ConsultaCard, { ConsultaCardSkeleton } from "../components/ConsultaCard.tsx";
 import ConsultaInscripcionModal from "../components/ConsultaInscripcionModal.tsx";
 import { decodeToken } from "../utils/auth.ts";
+import LocalizedTimePicker from "../components/LocalizedTimePicker.tsx";
+
+type Consulta = C<Dictado<Docente, Materia>>
 
 export default function Materias() {
     // Colecciones de materias, docentes y consultas
@@ -30,8 +33,12 @@ export default function Materias() {
     // Variables para el selector de materia
     const [valueMateria, setValueMateria] = useState<{ id: string, label: string } | null>(null)
     const [inputMateria, setInputMateria] = useState<string>("")
-    // Variables para el selsector de fecha
+    // Variables para los selectores de fecha y hora
     const [valueFecha, setValueFecha] = useState<Date | null>(null)
+    const [valueHoraInicio, setValueHoraInicio] = useState<Date | null>(null)
+    const [valueHoraFin, setValueHoraFin] = useState<Date | null>(null)
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
     // Variables de control sobre cargas y errores
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
@@ -116,7 +123,7 @@ export default function Materias() {
             let materia = searchParams.get("materia") || ""
             let route: string
             if (docente !== "" && materia !== "") {
-                const dictado: Dictado | undefined = (await apiClient.get(API_ROUTES.DICTADOS.FIND_ONE_BY_DOCENTE_AND_MATERIA(docente, materia), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })).data
+                const dictado: Dictado<string, string> | undefined = (await apiClient.get(API_ROUTES.DICTADOS.FIND_ONE_BY_DOCENTE_AND_MATERIA(docente, materia), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })).data
 
                 if (!dictado) {
                     setError("No existe el dictado seleccionado")
@@ -184,8 +191,30 @@ export default function Materias() {
         async function reloadConsultas() {
             await fetchConsultas()
         }
+
+        if (valueFecha && valueHoraInicio && valueHoraFin) {
+            let fecha = new Date(valueFecha)
+
+            // Armar la fecha y hora de inicio
+            let { horaInicio, minutoInicio } = { horaInicio: valueHoraInicio.getHours(), minutoInicio: valueHoraInicio.getMinutes() }
+            fecha.setHours(horaInicio, minutoInicio, 0, 0)
+            searchParams.set("i", fecha.toISOString())
+
+            // Armar la fecha y hora de fin
+            let { horaFin, minutoFin } = { horaFin: valueHoraFin.getHours(), minutoFin: valueHoraFin.getMinutes() }
+            fecha.setHours(horaFin, minutoFin, 0, 0)
+            if (horaFin === 0 && minutoFin === 0) {
+                fecha = fecha.addDays(1)
+            }
+            searchParams.set("f", fecha.toISOString())
+        } else {
+            searchParams.delete("i")
+            searchParams.delete("f")
+        }
+        setSearchParams(searchParams, { replace: true })
+
         reloadConsultas()
-    }, [valueFecha])
+    }, [valueFecha, valueHoraInicio, valueHoraFin])
 
     const onSelectDocente = (_event: any, value: { id: string, label: string }) => {
         if (value) {
@@ -208,15 +237,38 @@ export default function Materias() {
     }
 
     const onSelectFecha = (value: Date | null) => {
-        if (value) {
-            searchParams.set("i", value.toISOString())
-            searchParams.set("f", value.addDays(1).toISOString())
-        } else {
-            searchParams.delete("i")
-            searchParams.delete("f")
-        }
         setValueFecha(value)
-        setSearchParams(searchParams)
+        if (value) {
+            if (!valueHoraInicio) setValueHoraInicio(new Date(hoy))
+            if (!valueHoraFin) setValueHoraFin(new Date(hoy.addDays(1)))
+        }
+    }
+
+    const onSelectHoraInicio = (value: Date | null) => {
+        if (!valueFecha) onSelectFecha(hoy)
+        let horas = value ? value.getHours() : 0
+        let minutos = value ? value.getMinutes() : 0
+        value = new Date(hoy)
+        value.setHours(horas, minutos)
+        if (valueHoraFin && value > valueHoraFin) {
+            setValueHoraFin(value.addMinutes(1))
+        }
+        setValueHoraInicio(value)
+    }
+
+    const onSelectHoraFin = (value: Date | null) => {
+        if (!valueFecha) onSelectFecha(hoy)
+        let horas = value ? value.getHours() : 0
+        let minutos = value ? value.getMinutes() : 0
+        value = new Date(hoy)
+        value.setHours(horas, minutos)
+        if (horas === 0 && minutos === 0) {
+            value = value.addDays(1)
+        }
+        if (valueHoraInicio && valueHoraInicio > value) {
+            setValueHoraInicio(value.addMinutes(-1))
+        }
+        setValueHoraFin(value)
     }
 
     const getNombreDocente = (id: string) => {
@@ -324,41 +376,61 @@ export default function Materias() {
                             <Icon>filter_list</Icon>
                         </IconButton>
                     </Grid>
-                    <Grid container size={{ xs: 12, lg: 10 }}>
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <ControlledAutocomplete
-                                id="docente"
-                                options={docentes.map(docente => { return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` } })}
-                                label="Docente"
-                                value={valueDocente}
-                                onChange={onSelectDocente}
-                                inputValue={inputDocente}
-                                onInputChange={(_event: any, newInputValue: any) => {
-                                    setInputDocente(newInputValue);
-                                }}
-                                sx={{ justifyContent: "start" }}
-                            />
+                    <Grid container size={{ xs: 12, lg: 9, xl: 8 }}>
+                        <Grid container size={12}>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <ControlledAutocomplete
+                                    id="docente"
+                                    options={docentes.map(docente => { return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` } })}
+                                    label="Docente"
+                                    value={valueDocente}
+                                    onChange={onSelectDocente}
+                                    inputValue={inputDocente}
+                                    onInputChange={(_event: any, newInputValue: any) => {
+                                        setInputDocente(newInputValue);
+                                    }}
+                                    sx={{textAlign: "left"}}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <ControlledAutocomplete
+                                    id="materia"
+                                    options={materias.map(materia => { return { id: materia._id, label: materia.descripcion } })}
+                                    label="Materia"
+                                    value={valueMateria}
+                                    onChange={onSelectMateria}
+                                    inputValue={inputMateria}
+                                    onInputChange={(_event: any, newInputValue: any) => {
+                                        setInputMateria(newInputValue);
+                                    }}
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <ControlledAutocomplete
-                                id="materia"
-                                options={materias.map(materia => { return { id: materia._id, label: materia.descripcion } })}
-                                label="Materia"
-                                value={valueMateria}
-                                onChange={onSelectMateria}
-                                inputValue={inputMateria}
-                                onInputChange={(_event: any, newInputValue: any) => {
-                                    setInputMateria(newInputValue);
-                                }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <LocalizedDatePicker
-                                value={valueFecha}
-                                onChange={onSelectFecha}
-                                label="Fecha"
-                                clearable
-                            />
+                        <Grid container size={12}>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <LocalizedDatePicker
+                                    value={valueFecha}
+                                    onChange={onSelectFecha}
+                                    label="Fecha"
+                                    clearable
+                                />
+                            </Grid>
+                            <Grid container size={{ xs: 12, md: 6 }}>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <LocalizedTimePicker
+                                        value={valueFecha && valueHoraInicio}
+                                        onChange={onSelectHoraInicio}
+                                        label="Desde"
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <LocalizedTimePicker
+                                        value={valueFecha && valueHoraFin}
+                                        onChange={onSelectHoraFin}
+                                        label="Hasta"
+                                    />
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

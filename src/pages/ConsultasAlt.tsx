@@ -13,7 +13,7 @@ import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
-import LocalizedDateTimePicker from "../components/LocalizedDateTimePicker.tsx";
+import LocalizedDateTimePicker from "../components/LocalizedTimePicker.tsx";
 import Box from "@mui/material/Box";
 import type { Consulta } from "../types/Consulta.ts";
 

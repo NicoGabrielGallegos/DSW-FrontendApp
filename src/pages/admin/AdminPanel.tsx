@@ -71,27 +71,12 @@ export default function ResponsiveDrawer(props: Props) {
             </List>
             <Divider />
             <List>
-                {['Dictados', 'Inscripciones'].map((text) => (
+                {['Dictados', 'Consultas', 'Inscripciones'].map((text) => (
                     <RouterLink to={text.toLowerCase()} key={text}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
                                     <Icon>list</Icon>
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    </RouterLink>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                {['Consultas', 'Calificaciones'].map((text, index) => (
-                    <RouterLink to={text.toLowerCase()} key={text}>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <Icon>{["school", "star"][index]}</Icon>
                                 </ListItemIcon>
                                 <ListItemText primary={text} />
                             </ListItemButton>

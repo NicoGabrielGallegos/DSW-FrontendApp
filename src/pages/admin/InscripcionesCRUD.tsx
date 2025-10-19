@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react"
+import type { Inscripcion as I } from "../../types/Inscripcion.ts"
+import type { Alumno } from "../../types/Alumno.ts"
+import type { Consulta as C } from "../../types/Consulta.ts"
 import type { Dictado as D } from "../../types/Dictado.ts"
 import type { Docente } from "../../types/Docente.ts"
 import type { Materia } from "../../types/Materia.ts"
@@ -18,38 +21,41 @@ import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 import Alert from "@mui/material/Alert"
 import ControlledAutocomplete from "../../components/ControlledAutocomplete.tsx"
+import { FormatedDate } from "../../types/FormatedDate.ts"
 
 type Dictado = D<Docente, Materia>
+type Consulta = C<Dictado>
+type Inscripcion = I<Alumno, Consulta>
 
-export default function DictadosCRUD() {
-    const [dictados, setDictados] = useState<Dictado[]>([])
-    const [docentes, setDocentes] = useState<Docente[]>([])
-    const [materias, setMaterias] = useState<Materia[]>([])
+export default function InscripcionesCRUD() {
+    const [inscripciones, setInscripciones] = useState<Inscripcion[]>([])
+    const [alumnos, setAlumnos] = useState<Alumno[]>([])
+    const [consultas, setConsultas] = useState<Consulta[]>([])
     const [message, setMessage] = useState<string | null>(null)
     const [severity, setSeverity] = useState<"success" | "error">("success")
     const [searchParams, setSearchParams] = useSearchParams()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
-    // Variables para el selector de docente
-    const [valueDocente, setValueDocente] = useState<{ id: string, label: string } | null>(null)
-    const [inputDocente, setInputDocente] = useState<string>("")
-    // Variables para el selector de materia
-    const [valueMateria, setValueMateria] = useState<{ id: string, label: string } | null>(null)
-    const [inputMateria, setInputMateria] = useState<string>("")
+    // Variables para el selector de alumnos
+    const [valueAlumno, setValueAlumno] = useState<{ id: string, label: string } | null>(null)
+    const [inputAlumno, setInputAlumno] = useState<string>("")
+    // Variables para el selector de consulta
+    const [valueConsulta, setValueConsulta] = useState<{ id: string, label: string } | null>(null)
+    const [inputConsulta, setInputConsulta] = useState<string>("")
 
-    async function fetchDictados() {
+    async function fetchInscripciones() {
         console.log(page, count);
 
         try {
-            let params: { p?: string, l?: string, populate: string } = { populate: "docente,materia" }
+            let params: { p?: string, l?: string, populate: string } = { populate: "alumno,docente,materia" }
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
             if (limit) params.l = limit
 
-            const res = await apiClient.get(API_ROUTES.DICTADOS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
-            setDictados(res.data)
+            const res = await apiClient.get(API_ROUTES.INSCRIPCIONES.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
+            setInscripciones(res.data)
             setCount(res.total)
         } catch (err: any) {
             setMessage(err.message)
@@ -57,13 +63,13 @@ export default function DictadosCRUD() {
         }
     }
 
-    async function createDictado() {
+    async function createInscripcion() {
         const body = {
-            docente: valueDocente?.id,
-            materia: valueMateria?.id,
+            alumno: valueAlumno?.id,
+            consulta: valueConsulta?.id,
         }
 
-        if (!body.docente || !body.materia) {
+        if (!body.alumno || !body.consulta) {
             let err = "Campos incompletos: "
             Object.keys(body).forEach(key => {
                 if (!body[key as keyof typeof body]) {
@@ -76,44 +82,44 @@ export default function DictadosCRUD() {
         }
 
         try {
-            const res = await apiClient.post(API_ROUTES.DICTADOS.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body, params: { populate: "docente,materia" } })
-            setMessage(`${res.message}: ${getNombreDocente(res.data.docente)} -> ${getNombreMateria(res.data.materia)}`)
+            const res = await apiClient.post(API_ROUTES.INSCRIPCIONES.ADD, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params: { populate: "alumno,docente,materia" }, body })
+            setMessage(`${res.message}: ${getNombreAlumno(res.data.alumno)} -> ${getLabelConsulta(res.data.consulta)}`)
             setSeverity("success")
         } catch (err: any) {
             setMessage(err.message)
             setSeverity("error")
         } finally {
-            fetchDictados()
+            fetchInscripciones()
         }
     }
 
-    async function deleteDictado(id: string) {
+    async function deleteInscripcion(id: string) {
         try {
-            const res = await apiClient.delete(API_ROUTES.DICTADOS.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params: { populate: "docente,materia" } })
-            setMessage(`${res.message}: ${getNombreDocente(res.data.docente)} -> ${getNombreMateria(res.data.materia)}`)
+            const res = await apiClient.delete(API_ROUTES.INSCRIPCIONES.DELETE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params: { populate: "alumno,docente,materia" } })
+            setMessage(`${res.message}: ${getNombreAlumno(res.data.alumno)} -> ${getLabelConsulta(res.data.consulta)}`)
             setSeverity("success")
         } catch (err: any) {
             setMessage(err.message)
             setSeverity("error")
             throw err
         } finally {
-            fetchDictados()
+            fetchInscripciones()
         }
     }
 
     useEffect(() => {
         searchParams.set("p", "1")
         searchParams.set("l", "10")
-        fetchDictados()
-        fetchDocentes()
-        fetchMaterias()
+        fetchInscripciones()
+        fetchAlumnos()
+        fetchConsultas()
     }, [])
 
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
         setSearchParams(searchParams, { replace: true })
-        fetchDictados()
+        fetchInscripciones()
     };
 
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,36 +127,40 @@ export default function DictadosCRUD() {
         setPage(0);
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams, { replace: true })
-        fetchDictados()
+        fetchInscripciones()
     };
 
-    async function fetchDocentes() {
+    async function fetchAlumnos() {
         try {
-            const res = await apiClient.get(API_ROUTES.DOCENTES.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
-            setDocentes(res.data)
+            const res = await apiClient.get(API_ROUTES.ALUMNOS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            setAlumnos(res.data)
         } catch (err: any) {
             console.log(err.message)
             throw err
         }
     }
 
-    async function fetchMaterias() {
+    async function fetchConsultas() {
         try {
-            const res = await apiClient.get(API_ROUTES.MATERIAS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
-            setMaterias(res.data)
+            const res = await apiClient.get(API_ROUTES.CONSULTAS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params: { populate: "docente,materia" } })
+            setConsultas(res.data)
         } catch (err: any) {
             console.log(err.message)
             throw err
         }
     }
 
-    const onSelectDocente = (_event: any, value: any) => {
-        setValueDocente(value)
+    const onSelectAlumno = (_event: any, value: any) => {
+        setValueAlumno(value)
 
     }
 
-    const onSelectMateria = (_event: any, value: any) => {
-        setValueMateria(value)
+    const onSelectConsulta = (_event: any, value: any) => {
+        setValueConsulta(value)
+    }
+
+    const getNombreAlumno = (alumno: Alumno) => {
+        return alumno ? `${alumno.apellido} ${alumno.nombre}` : ""
     }
 
     const getNombreDocente = (docente: Docente) => {
@@ -159,6 +169,28 @@ export default function DictadosCRUD() {
 
     const getNombreMateria = (materia: Materia) => {
         return materia ? materia.descripcion : ""
+    }
+
+    const getFecha = (consulta: Consulta) => {
+        let horaInicio = new FormatedDate(consulta.horaInicio)
+        return horaInicio ? `${horaInicio.dateString()}` : ""
+    }
+
+    const getHoraInicio = (consulta: Consulta) => {
+        let horaInicio = new FormatedDate(consulta.horaInicio)
+        return horaInicio ? `${horaInicio.timeString()}` : ""
+    }
+
+    const getHoraFin = (consulta: Consulta) => {
+        let horaFin = new FormatedDate(consulta.horaFin)
+        return horaFin ? `${horaFin.timeString()}` : ""
+    }
+
+    const getLabelConsulta = (consulta: Consulta) => {
+        return consulta ?
+            `[${getNombreDocente(consulta.dictado.docente)} & ${getNombreMateria(consulta.dictado.materia)}] @ [${getFecha(consulta)}, ${getHoraInicio(consulta)} - ${getHoraFin(consulta)}]`
+            :
+            ""
     }
 
     return (
@@ -171,26 +203,26 @@ export default function DictadosCRUD() {
                     <TableHead>
                         <TableRow>
                             <TableCell>Id</TableCell>
-                            <TableCell>Docente</TableCell>
-                            <TableCell>Materia</TableCell>
+                            <TableCell>Alumno</TableCell>
+                            <TableCell>Consulta</TableCell>
                             <TableCell>Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {dictados.map((dictado, idx) => {
+                        {inscripciones.map((inscripcion, idx) => {
                             return (
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{dictado._id}</Typography></TableCell>
+                                    <TableCell><Typography variant="subtitle2">{inscripcion._id}</Typography></TableCell>
                                     <TableCell>
-                                        <Typography variant="body2" fontSize={10} color="textSecondary">{dictado.docente._id}</Typography>
-                                        <Typography variant="body2">{getNombreDocente(dictado.docente)}</Typography>
+                                        <Typography variant="body2" fontSize={10} color="textSecondary">{inscripcion.alumno._id}</Typography>
+                                        <Typography variant="body2">{getNombreAlumno(inscripcion.alumno)}</Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="body2" fontSize={10} color="textSecondary">{dictado.materia._id}</Typography>
-                                        <Typography variant="body2">{getNombreMateria(dictado.materia)}</Typography>
+                                        <Typography variant="body2" fontSize={10} color="textSecondary">{inscripcion.consulta._id}</Typography>
+                                        <Typography variant="body2">{getLabelConsulta(inscripcion.consulta)}</Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <IconButton onClick={() => deleteDictado(dictado._id)} size="small"><Icon color="action">delete</Icon></IconButton>
+                                        <IconButton onClick={() => deleteInscripcion(inscripcion._id)} size="small"><Icon color="action">delete</Icon></IconButton>
                                     </TableCell>
                                 </TableRow>
                             )
@@ -200,12 +232,12 @@ export default function DictadosCRUD() {
                             <TableCell>
                                 <ControlledAutocomplete
                                     id="docente"
-                                    options={docentes.map(docente => { return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` } })}
-                                    value={valueDocente}
-                                    onChange={onSelectDocente}
-                                    inputValue={inputDocente}
+                                    options={alumnos.map(alumno => { return { id: alumno._id, label: getNombreAlumno(alumno) } })}
+                                    value={valueAlumno}
+                                    onChange={onSelectAlumno}
+                                    inputValue={inputAlumno}
                                     onInputChange={(_event: any, newInputValue: any) => {
-                                        setInputDocente(newInputValue);
+                                        setInputAlumno(newInputValue);
                                     }}
                                     variant="standard"
                                 />
@@ -213,18 +245,18 @@ export default function DictadosCRUD() {
                             <TableCell>
                                 <ControlledAutocomplete
                                     id="materia"
-                                    options={materias.map(materia => { return { id: materia._id, label: materia.descripcion } })}
-                                    value={valueMateria}
-                                    onChange={onSelectMateria}
-                                    inputValue={inputMateria}
+                                    options={consultas.map(consulta => { return { id: consulta._id, label: getLabelConsulta(consulta) } })}
+                                    value={valueConsulta}
+                                    onChange={onSelectConsulta}
+                                    inputValue={inputConsulta}
                                     onInputChange={(_event: any, newInputValue: any) => {
-                                        setInputMateria(newInputValue);
+                                        setInputConsulta(newInputValue);
                                     }}
                                     variant="standard"
                                 />
                             </TableCell>
                             <TableCell>
-                                <IconButton onClick={createDictado} size="small"><Icon color="primary">add</Icon></IconButton>
+                                <IconButton onClick={createInscripcion} size="small"><Icon color="primary">add</Icon></IconButton>
                             </TableCell>
                         </TableRow>
                     </TableBody>

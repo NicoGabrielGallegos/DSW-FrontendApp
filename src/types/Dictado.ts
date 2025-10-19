@@ -1,8 +1,8 @@
 import type { Docente } from "./Docente.ts"
 import type { Materia } from "./Materia.ts"
 
-export interface Dictado {
+export interface Dictado<TDocente extends string | Docente = string, TMateria extends string | Materia = string> {
     _id: string,
-    docente: string | Docente
-    materia: string | Materia
+    docente: TDocente
+    materia: TMateria
 }

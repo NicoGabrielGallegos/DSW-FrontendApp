@@ -15,6 +15,8 @@ import MateriasCRUD from './pages/admin/MateriasCRUD.tsx'
 import DocentesCRUD from './pages/admin/DocentesCRUD.tsx'
 import DictadosCRUD from './pages/admin/DictadosCRUD.tsx'
 import AlumnosCRUD from './pages/admin/AlumnosCRUD.tsx'
+import InscripcionesCRUD from './pages/admin/InscripcionesCRUD.tsx'
+import ConsultasCRUD from './pages/admin/ConsultasCRUD.tsx'
 
 function App() {
   return (
@@ -42,8 +44,8 @@ function App() {
             <Route path="docentes" element={<DocentesCRUD />} />
             <Route path="materias" element={<MateriasCRUD />} />
             <Route path="dictados" element={<DictadosCRUD />} />
-            <Route path="inscripciones" element={<></>} />
-            <Route path="consultas" element={<>CRUD Consultas</>} />
+            <Route path="inscripciones" element={<InscripcionesCRUD />} />
+            <Route path="consultas" element={<ConsultasCRUD />} />
             <Route path="calificaciones" element={<>CRUD Calificaciones</>} />
           </Route>
         </Routes>
