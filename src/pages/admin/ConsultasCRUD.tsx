@@ -18,8 +18,7 @@ import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 import Alert from "@mui/material/Alert"
-import ControlledAutocomplete from "../../components/ControlledAutocomplete.tsx"
-import { FormatedDate } from "../../types/FormatedDate.ts"
+import ControlledAutocomplete from "../../components/shared/ControlledAutocomplete.tsx"
 import LocalizedDateTimePicker from "../../components/LocalizedDateTimePicker.tsx"
 
 type Dictado = D<Docente, Materia>
@@ -166,17 +165,17 @@ export default function InscripcionesCRUD() {
     }
 
     const getFecha = (consulta: Consulta) => {
-        let horaInicio = new FormatedDate(consulta.horaInicio)
+        let horaInicio = new Date(consulta.horaInicio)
         return horaInicio ? `${horaInicio.dateString()}` : ""
     }
 
     const getHoraInicio = (consulta: Consulta) => {
-        let horaInicio = new FormatedDate(consulta.horaInicio)
+        let horaInicio = new Date(consulta.horaInicio)
         return horaInicio ? `${horaInicio.timeString()}` : ""
     }
 
     const getHoraFin = (consulta: Consulta) => {
-        let horaFin = new FormatedDate(consulta.horaFin)
+        let horaFin = new Date(consulta.horaFin)
         return horaFin ? `${horaFin.timeString()}` : ""
     }
 
@@ -214,8 +213,8 @@ export default function InscripcionesCRUD() {
                                         <Typography variant="body2" fontSize={10} color="textSecondary">{consulta.dictado._id}</Typography>
                                         <Typography variant="body2">{getLabelDictado(consulta.dictado)}</Typography>
                                     </TableCell>
-                                    <TableCell>{new FormatedDate(consulta.horaInicio).fullString()}</TableCell>
-                                    <TableCell>{new FormatedDate(consulta.horaFin).fullString()}</TableCell>
+                                    <TableCell>{new Date(consulta.horaInicio).fullString()}</TableCell>
+                                    <TableCell>{new Date(consulta.horaFin).fullString()}</TableCell>
                                     <TableCell>{consulta.estado}</TableCell>
                                     <TableCell>
                                         <IconButton onClick={() => deleteConsulta(consulta._id)} size="small"><Icon color="action">delete</Icon></IconButton>

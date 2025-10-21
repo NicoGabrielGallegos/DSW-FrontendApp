@@ -7,6 +7,7 @@ export interface AuthTokenPayload {
         nombre: string,
         apellido: string,
         correo: string,
-        rol: "alumno" | "docente" | "admin"
+        permisos?: number[],
+        rol: "alumno" | "docente" | "administrador"
     }
 }

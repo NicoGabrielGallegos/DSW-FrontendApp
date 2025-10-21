@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
-import MateriaCard, { MateriaCardSkeleton } from "../components/MateriaCard.tsx";
-import ResponsiveDrawer from "../components/ResponsiveDrawer.tsx";
+import MateriaCard, { MateriaCardSkeleton } from "../components/alumnos/MateriaCard.tsx";
+import ResponsiveDrawer from "../components/shared/ResponsiveDrawer.tsx";
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
@@ -13,7 +13,7 @@ import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
-import LocalizedDateTimePicker from "../components/LocalizedTimePicker.tsx";
+import LocalizedDateTimePicker from "../components/shared/LocalizedTimePicker.tsx";
 import Box from "@mui/material/Box";
 import type { Consulta } from "../types/Consulta.ts";
 

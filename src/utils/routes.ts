@@ -1,0 +1,18 @@
+export const ROUTES = {
+    LOGIN: "/login",
+    LOGIN_ALUMNOS: "/login/alumnos",
+    LOGIN_DOCENTES: "/login/docentes",
+    HOME: "/home",
+    MATERIAS: "/materias",
+    DOCENTES: "/docentes",
+    CONSULTAS: "/consultas",
+    ADMIN: {
+        ROOT: "/admin",
+        CRUD_ALUMNOS: "/admin/alumnos",
+        CRUD_DOCENTES: "/admin/docentes",
+        CRUD_MATERIAS: "/admin/materias",
+        CRUD_DICTADOS: "/admin/dictados",
+        CRUD_CONSULTAS: "/admin/consultas",
+        CRUD_INSCRIPCIONES: "/admin/inscripciones",
+    }
+}

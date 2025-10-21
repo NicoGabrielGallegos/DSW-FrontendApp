@@ -20,8 +20,7 @@ import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 import Alert from "@mui/material/Alert"
-import ControlledAutocomplete from "../../components/ControlledAutocomplete.tsx"
-import { FormatedDate } from "../../types/FormatedDate.ts"
+import ControlledAutocomplete from "../../components/shared/ControlledAutocomplete.tsx"
 
 type Dictado = D<Docente, Materia>
 type Consulta = C<Dictado>
@@ -172,17 +171,17 @@ export default function InscripcionesCRUD() {
     }
 
     const getFecha = (consulta: Consulta) => {
-        let horaInicio = new FormatedDate(consulta.horaInicio)
+        let horaInicio = new Date(consulta.horaInicio)
         return horaInicio ? `${horaInicio.dateString()}` : ""
     }
 
     const getHoraInicio = (consulta: Consulta) => {
-        let horaInicio = new FormatedDate(consulta.horaInicio)
+        let horaInicio = new Date(consulta.horaInicio)
         return horaInicio ? `${horaInicio.timeString()}` : ""
     }
 
     const getHoraFin = (consulta: Consulta) => {
-        let horaFin = new FormatedDate(consulta.horaFin)
+        let horaFin = new Date(consulta.horaFin)
         return horaFin ? `${horaFin.timeString()}` : ""
     }
 

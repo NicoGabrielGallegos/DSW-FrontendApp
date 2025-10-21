@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
 import { useNavigate } from 'react-router';
+import type { Materia } from '../../types/Materia.ts';
+import { ROUTES } from '../../utils/routes.ts';
 
 export function MateriaCardSkeleton() {
     return (
@@ -43,15 +45,15 @@ export function MateriaCardSkeleton() {
     );
 }
 
-export default function MateriaCard({ id, nombreMateria, options }: { id: string, nombreMateria: string, options?: { docente?: string } }) {
+export default function MateriaCard({ materia, options }: { materia: Materia, options?: { docente?: string } }) {
     const navigate = useNavigate()
 
     const handleVerDocentes = () => {
-        navigate(`/dashboard/docentes?materia=${id}`)
+        navigate(`${ROUTES.DOCENTES}?materia=${materia._id}`)
     }
 
     const handleVerConsultas = () => {
-        navigate(`/dashboard/consultas?materia=${id}${options && options.docente ? `&docente=${options.docente}` : ""}`)
+        navigate(`${ROUTES.CONSULTAS}?materia=${materia._id}${options && options.docente ? `&docente=${options.docente}` : ""}`)
     }
     return (
         <Card elevation={3}>
@@ -65,7 +67,7 @@ export default function MateriaCard({ id, nombreMateria, options }: { id: string
                 <Grid container alignItems={"center"}>
                     <Grid size={{ xs: 12, md: "auto" }} sx={{ textAlign: { xs: "center", md: "left" } }}>
                         <Typography variant="h5" component="div" align="inherit" sx={{ py: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
-                            {nombreMateria}
+                            {materia.descripcion}
                         </Typography>
                     </Grid>
                     <Grid container size={{ xs: 12, md: "grow" }} alignItems={"center"}>

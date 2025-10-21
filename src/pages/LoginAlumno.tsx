@@ -7,17 +7,15 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import Icon from '@mui/material/Icon';
 import { useState } from "react";
-import Link from "@mui/material/Link";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Input from "@mui/material/Input";
-import { Navigate } from "react-router";
+import { Link, Navigate } from "react-router";
 import { API_ROUTES } from "../api/endpoints.ts";
 import { apiClient } from "../api/apiClient.ts";
 import { useAuth } from "../context/AuthContext.tsx";
+import { ROUTES } from "../utils/routes.ts";
 
 export default function LoginAlumno() {
     const [showPassword, setShowPassword] = useState(false);
@@ -40,19 +38,17 @@ export default function LoginAlumno() {
     const handleLogin = async () => {
         const correo = (document.getElementById("correo") as HTMLInputElement).value
         const password = (document.getElementById("contraseña") as HTMLInputElement).value
-        //login("alumno", correo, password, navigate)
         try {
-            const token = (await apiClient.post(API_ROUTES.ALUMNOS.LOGIN, { body: { correo, password } })).data
+            const token = (await apiClient.post(API_ROUTES.AUTH.LOGIN_ALUMNO, { body: { correo, password } })).data
             localStorage.setItem("token", token)
             auth.login(token)
         } catch (err: any) {
             setError(true)
-            console.log(err.message);
         }
     }
 
     return (
-        auth.isAuthenticated() ? <Navigate to={"/dashboard"} /> :
+        auth.isAuthenticated() ? <Navigate to={ROUTES.HOME} /> :
             <Box sx={{ margin: "0 auto", textAlign: "center", width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Paper elevation={4} sx={{ display: "flex", width: "80%", minWidth: 275, maxWidth: 350, m: 1, p: 4, alignItems: "center", justifyContent: "center" }}>
                     <Grid container spacing={0} alignItems={"center"}>
@@ -94,21 +90,15 @@ export default function LoginAlumno() {
                                 </FormControl>
                             </Box>
                         </Grid>
-                        <Grid size={7} pt={1} pb={1}>
-                            <FormControlLabel control={<Checkbox />} label={<Typography sx={{ fontSize: 12 }}>Mantener sesión iniciada</Typography>} />
-                        </Grid>
-                        <Grid size={5} pt={1} pb={1}>
-                            <Link href="#" sx={{ fontSize: 12 }}>
-                                Olvidé mi contraseña
-                            </Link>
-                        </Grid>
                         <Grid size={12} pt={2} pb={1}>
                             <Button variant="contained" sx={{ m: 1 }} onClick={handleLogin}>Iniciar Sesión</Button>
                         </Grid>
                         <Grid size={12}>
-                            <Link href="/login/docentes" sx={{ fontSize: 12 }} color="textSecondary">
-                                Iniciar sesión como docente
-                            </Link>
+                            <Typography sx={{ fontSize: 12 }} color="textSecondary">
+                                <Link to={ROUTES.LOGIN_DOCENTES} replace>
+                                    Ingresar como docente
+                                </Link>
+                            </Typography>
                         </Grid>
                     </Grid>
                 </Paper>

@@ -15,6 +15,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router';
 import ProfileButton from './ProfileButton.tsx';
+import { useAuth } from '../../context/AuthContext.tsx';
+import { ROUTES } from '../../utils/routes.ts';
 
 const drawerWidth = 240;
 
@@ -22,6 +24,7 @@ const drawerWidth = 240;
 export default function ResponsiveDrawer({ title, children }: { title: string, children?: any }) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const auth = useAuth()
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -43,13 +46,13 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
             <Toolbar />
             <Divider />
             <List>
-                <RouterLink to={"/dashboard"} >
+                <RouterLink to={ROUTES.HOME} >
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
                                 <Icon>book</Icon>
                             </ListItemIcon>
-                            <ListItemText primary="Dashboard" />
+                            <ListItemText primary="Home" />
                         </ListItemButton>
                     </ListItem>
                 </RouterLink>
@@ -57,7 +60,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
             <Divider />
             <List>
                 {['Materias', 'Docentes', 'Consultas'].map((text, index) => (
-                    <RouterLink to={`/dashboard/${text.toLowerCase()}`} key={text}>
+                    <RouterLink to={[ROUTES.MATERIAS, ROUTES.DOCENTES, ROUTES.CONSULTAS][index]} key={text}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
@@ -68,6 +71,19 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                         </ListItem>
                     </RouterLink>
                 ))}
+            </List>
+            <Divider />
+            <List>
+                <RouterLink to={ROUTES.ADMIN.ROOT} >
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Icon>admin_panel_settings</Icon>
+                            </ListItemIcon>
+                            <ListItemText primary="Admin" />
+                        </ListItemButton>
+                    </ListItem>
+                </RouterLink>
             </List>
             <Divider />
         </div>

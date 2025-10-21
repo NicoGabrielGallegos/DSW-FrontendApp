@@ -1,62 +1,82 @@
-import { dayNames } from "./Constants.tsx";
-
 declare global {
     interface Date {
+        //
         addDays(days: number): Date;
         addHours(hours: number): Date;
         addMinutes(minutes: number): Date;
         addSeconds(seconds: number): Date;
-        toFormattedHour(): string;
-        toFormattedString(): string;
+        //
+        hoursString(): string;
+        minutesString(): string;
+        secondsString(): string;
+        //
+        dayString(): string;
+        monthString(): string;
+        yearString(): string;
+        //
+        timeString(): string;
+        dateString(): string;
+        fullString(): string;
     }
 }
 
-Date.prototype.addDays = function(days: number): Date {
-    let newDate: Date = new Date(this);
-    newDate.setDate(newDate.getDate() + days);  
-    return newDate;
+Date.prototype.addDays = function (days: number): Date {
+    this.setDate(this.getDate() + days);
+    return this;
 }
 
-Date.prototype.addHours = function(hours: number): Date {
-    let newDate: Date = new Date(this);
-    newDate.setHours(newDate.getHours() + hours);
-    return newDate;
+Date.prototype.addHours = function (hours: number): Date {
+    this.setHours(this.getHours() + hours);
+    return this;
 }
 
-Date.prototype.addMinutes = function(minutes: number): Date {
-    let newDate: Date = new Date(this);
-    newDate.setMinutes(newDate.getMinutes() + minutes);
-    return newDate;
+Date.prototype.addMinutes = function (minutes: number): Date {
+    this.setMinutes(this.getMinutes() + minutes);
+    return this;
 }
 
-Date.prototype.addSeconds = function(seconds: number): Date {
-    let newDate: Date = new Date(this);
-    newDate.addSeconds(newDate.getSeconds() + seconds);
-    return newDate;
+Date.prototype.addSeconds = function (seconds: number): Date {
+    this.addSeconds(this.getSeconds() + seconds);
+    return this;
 }
 
-Date.prototype.toFormattedHour = function(): string {
-    return this.getHours().toString().padStart(2, "0") + ":" + this.getMinutes().toString().padStart(2, "0")
+Date.prototype.hoursString = function (): string {
+    let h = this.getHours()
+    return h < 10 ? `0${h}` : `${h}`
 }
 
-Date.prototype.toFormattedString =  function(): string {
-    return `${dayNames[(this.getDay()+6)%7]} ${this.getDate().toString().padStart(2, "0")}/${(this.getMonth()+1).toString().padStart(2, "0")}/${this.getFullYear()}`
+Date.prototype.minutesString = function (): string {
+    let m = this.getMinutes()
+    return m < 10 ? `0${m}` : `${m}`
 }
 
-/*
-export function getFormattedHour(date: Date): string {
-    return date.getHours().toString().padStart(2, "0") + ":" + date.getMinutes().toString().padStart(2, "0")
+Date.prototype.secondsString = function (): string {
+    let s = this.getSeconds()
+    return s < 10 ? `0${s}` : `${s}`
 }
 
-export function addDays(date: Date, days: number): Date {
-    let newDate: Date = new Date(date);
-    newDate.setDate(newDate.getDate() + days);
-    return newDate;
+Date.prototype.dayString = function (): string {
+    let d = this.getDate()
+    return d < 10 ? `0${d}` : `${d}`
 }
 
-export function addHours(date: Date, hours: number): Date {
-    let newDate: Date = new Date(date);
-    newDate.setHours(newDate.getHours() + hours);
-    return newDate;
+Date.prototype.monthString = function (): string {
+    let m = this.getMonth() + 1
+    return m < 10 ? `0${m}` : `${m}`
 }
-*/
+
+Date.prototype.yearString = function (): string {
+    return `${this.getFullYear()}`
+}
+
+Date.prototype.timeString = function (): string {
+    return `${this.hoursString()}:${this.minutesString()}`
+}
+
+Date.prototype.dateString = function (): string {
+    return `${this.dayString()}/${this.monthString()}/${this.yearString()}`
+}
+
+Date.prototype.fullString = function (): string {
+    return `${this.dateString()} - ${this.timeString()}`
+}

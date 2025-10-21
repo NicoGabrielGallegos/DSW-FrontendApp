@@ -1,6 +1,16 @@
 const BASE_URL = "http://localhost:3000/api"
 
 export const API_ROUTES = {
+    AUTH: {
+        LOGIN_ALUMNO: `${BASE_URL}/auth/alumno`,
+        LOGIN_DOCENTES: `${BASE_URL}/auth/docente`,
+        LOGIN_ADMINISTRADORES: `${BASE_URL}/auth/administrador`,
+    },
+    ADMINISTRADORES: {
+        FIND_ALL: `${BASE_URL}/administradores`,
+        FIND_ONE: (id: string) => `${BASE_URL}/administradores/${id}`,
+        FIND_BY_CORREO: (correo: string) => `${BASE_URL}/administradores/byCorreo/${correo}`,
+    },
     ALUMNOS: {
         FIND_ALL: `${BASE_URL}/alumnos`,
         FIND_ONE: (id: string) => `${BASE_URL}/alumnos/${id}`,
@@ -10,7 +20,7 @@ export const API_ROUTES = {
         DELETE: (id: string) => `${BASE_URL}/alumnos/${id}`,
         FIND_BY_CORREO: (correo: string) => `${BASE_URL}/alumnos/byCorreo/${correo}`,
         FIND_BY_CONSULTA: (consulta: string) => `${BASE_URL}/alumnos/byConsulta/${consulta}`,
-        LOGIN: `${BASE_URL}/alumnos/login`
+        
     },
     DOCENTES: {
         FIND_ALL: `${BASE_URL}/docentes`,
@@ -21,7 +31,6 @@ export const API_ROUTES = {
         DELETE: (id: string) => `${BASE_URL}/docentes/${id}`,
         FIND_BY_CORREO: (correo: string) => `${BASE_URL}/docentes/byCorreo/${correo}`,
         FIND_BY_MATERIA: (materia: string) => `${BASE_URL}/docentes/byMateria/${materia}`,
-        LOGIN: `${BASE_URL}/docentes/login`
     },
     MATERIAS: {
         FIND_ALL: `${BASE_URL}/materias`,

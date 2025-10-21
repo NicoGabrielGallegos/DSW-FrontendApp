@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
-import MateriaCard, { MateriaCardSkeleton } from "../components/MateriaCard";
-import ResponsiveDrawer from "../components/ResponsiveDrawer";
+import MateriaCard, { MateriaCardSkeleton } from "../components/alumnos/MateriaCard.tsx";
+import ResponsiveDrawer from "../components/shared/ResponsiveDrawer.tsx";
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
@@ -12,7 +12,7 @@ import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
 import TablePagination from "@mui/material/TablePagination";
-import ControlledAutocomplete from "../components/ControlledAutocomplete.tsx";
+import ControlledAutocomplete from "../components/shared/ControlledAutocomplete.tsx";
 
 export default function Materias() {
     // Colecciones de materias y docentes
@@ -56,7 +56,7 @@ export default function Materias() {
             res.data.sort((a: Docente, b: Docente) => `${a.apellido} ${a.nombre}` < `${b.apellido} ${b.nombre}` ? -1 : 1)
             setDocentes(res.data)
             setValueDocente(() => {
-                let docente = res.data.find((docente: Docente) => docente._id === searchParams.get("docente"))
+                let docente: Docente | null = res.data.find((docente: Docente) => docente._id === searchParams.get("docente"))
                 if (!docente) return null
                 return { id: docente._id, label: `${docente.apellido} ${docente.nombre}` }
             })
@@ -67,9 +67,9 @@ export default function Materias() {
 
     async function fetchMaterias() {
         try {
-            let docente = searchParams.get("docente") || ""
+            let docente = searchParams.get("docente")
             let route: string
-            if (docente === "") {
+            if (!docente) {
                 route = API_ROUTES.MATERIAS.FIND_ALL
             } else {
                 route = API_ROUTES.MATERIAS.FIND_BY_DOCENTE(docente)
@@ -161,7 +161,7 @@ export default function Materias() {
                 {materias.map((materia, idx) => {
                     return (
                         <Grid size={12} key={idx}>
-                            <MateriaCard id={materia._id} nombreMateria={materia.descripcion} options={{ docente: valueDocente?.id || "" }} />
+                            <MateriaCard materia={materia} options={{ docente: valueDocente?.id || "" }} />
                         </Grid>
                     )
                 })}

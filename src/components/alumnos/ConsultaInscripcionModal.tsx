@@ -2,13 +2,15 @@ import Backdrop from '@mui/material/Backdrop';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import type { Consulta } from '../types/Consulta.ts';
-import type { Materia } from '../types/Materia.ts';
-import type { Docente } from '../types/Docente.ts';
-import { FormatedDate } from '../types/FormatedDate.ts';
+import type { Dictado as D } from '../../types/Dictado.ts';
+import type { Consulta as C } from '../../types/Consulta.ts';
+import type { Materia } from '../../types/Materia.ts';
+import type { Docente } from '../../types/Docente.ts';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
+
+type Consulta = C<D<Docente, Materia>>
 
 const style = {
     position: 'absolute',
@@ -22,8 +24,8 @@ const style = {
 };
 
 export default function ConsultaInscripcionModal({ data, open, handleClose, handleInscripcion, done, alert, onCloseAlert }: { data: { consulta?: Consulta, materia?: Materia, docente?: Docente }, open: boolean, handleClose: () => void, handleInscripcion: () => void, done: boolean, alert: {message?: string, severity?: "error" | "success"}, onCloseAlert: () => void }) {
-    let horaInicio = data.consulta ? new FormatedDate(data.consulta.horaInicio) : undefined
-    let horaFin = data.consulta ? new FormatedDate(data.consulta.horaFin) : undefined
+    let horaInicio = data.consulta ? new Date(data.consulta.horaInicio) : undefined
+    let horaFin = data.consulta ? new Date(data.consulta.horaFin) : undefined
 
     return (
         <div>

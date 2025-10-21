@@ -6,33 +6,44 @@ import Icon from "@mui/material/Icon";
 import Grid from "@mui/material/Grid";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import ProfileButton from "../components/ProfileButton.tsx";
+import ProfileButton from "../components/shared/ProfileButton.tsx";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext.tsx";
 import { EMPTY_USER } from "../types/User.ts";
+import { ROUTES } from "../utils/routes.ts";
 
 const cards = [
     {
-        url: "materias",
+        url: ROUTES.MATERIAS,
         title: "Materias",
         icon: "auto_stories",
     },
     {
-        url: "docentes",
+        url: ROUTES.DOCENTES,
         title: "Docentes",
         icon: "people_alt",
     },
     {
-        url: "consultas",
+        url: ROUTES.CONSULTAS,
         title: "Consultas",
         icon: "calendar_month",
     },
 ];
 
-export default function Dashboard() {
+export default function Home() {
     const auth = useAuth()
     const user = auth.user || EMPTY_USER
     const navigate = useNavigate()
+    if (auth.user?.rol === "administrador") {
+        cards[4] = {
+            url: ROUTES.MATERIAS,
+            title: "Materias",
+            icon: "auto_stories",
+        }
+    } else {
+        delete cards[4]
+    }
+
 
     return (
         <>
@@ -49,7 +60,7 @@ export default function Dashboard() {
                 {cards.map((card, index) => (
                     <Grid size={{ xs: 12, md: 4 }} key={index} mx={{ xs: 4, md: 0 }}>
                         <Card elevation={3}>
-                            <CardActionArea onClick={() => navigate(`/dashboard/${card.url}`)}>
+                            <CardActionArea onClick={() => navigate(card.url)}>
                                 <CardContent sx={{ height: '100%' }}>
                                     <Typography color="text.secondary">
                                         <Icon sx={{ fontSize: 48 }}>{card.icon}</Icon>

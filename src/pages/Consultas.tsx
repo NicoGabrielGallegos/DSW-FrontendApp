@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Grid";
-import ResponsiveDrawer from "../components/ResponsiveDrawer.tsx";
+import ResponsiveDrawer from "../components/shared/ResponsiveDrawer.tsx";
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
@@ -11,14 +11,14 @@ import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
 import type { Consulta as C } from "../types/Consulta.ts";
-import LocalizedDatePicker from "../components/LocalizedDatePicker.tsx";
-import ControlledAutocomplete from "../components/ControlledAutocomplete.tsx";
+import LocalizedDatePicker from "../components/shared/LocalizedDatePicker.tsx";
+import ControlledAutocomplete from "../components/shared/ControlledAutocomplete.tsx";
 import TablePagination from "@mui/material/TablePagination";
 import type { Dictado } from "../types/Dictado.ts";
-import ConsultaCard, { ConsultaCardSkeleton } from "../components/ConsultaCard.tsx";
-import ConsultaInscripcionModal from "../components/ConsultaInscripcionModal.tsx";
+import ConsultaCard, { ConsultaCardSkeleton } from "../components/alumnos/ConsultaCard.tsx";
+import ConsultaInscripcionModal from "../components/alumnos/ConsultaInscripcionModal.tsx";
 import { decodeToken } from "../utils/auth.ts";
-import LocalizedTimePicker from "../components/LocalizedTimePicker.tsx";
+import LocalizedTimePicker from "../components/shared/LocalizedTimePicker.tsx";
 
 type Consulta = C<Dictado<Docente, Materia>>
 

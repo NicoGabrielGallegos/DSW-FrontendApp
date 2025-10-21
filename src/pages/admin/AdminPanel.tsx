@@ -13,8 +13,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Menu, MenuItem } from '@mui/material';
 import { Link as RouterLink, Outlet } from 'react-router';
+import ProfileButton from '../../components/shared/ProfileButton.tsx';
+import { ROUTES } from '../../utils/routes.ts';
 
 const drawerWidth = 240;
 
@@ -23,10 +24,8 @@ interface Props {
 }
 
 export default function ResponsiveDrawer(props: Props) {
-    const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -43,21 +42,26 @@ export default function ResponsiveDrawer(props: Props) {
         }
     };
 
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
     const drawer = (
         <div>
             <Toolbar />
             <Divider />
             <List>
+                <RouterLink to={ROUTES.HOME}>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Icon>book</Icon>
+                            </ListItemIcon>
+                            <ListItemText primary="Home" />
+                        </ListItemButton>
+                    </ListItem>
+                </RouterLink>
+            </List>
+            <Divider />
+            <List>
                 {['Alumnos', 'Docentes', 'Materias'].map((text, index) => (
-                    <RouterLink to={text.toLowerCase()} key={text}>
+                    <RouterLink to={[ROUTES.ADMIN.CRUD_ALUMNOS, ROUTES.ADMIN.CRUD_DOCENTES, ROUTES.ADMIN.CRUD_MATERIAS][index]} key={text}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
@@ -71,8 +75,8 @@ export default function ResponsiveDrawer(props: Props) {
             </List>
             <Divider />
             <List>
-                {['Dictados', 'Consultas', 'Inscripciones'].map((text) => (
-                    <RouterLink to={text.toLowerCase()} key={text}>
+                {['Dictados', 'Consultas', 'Inscripciones'].map((text, index) => (
+                    <RouterLink to={[ROUTES.ADMIN.CRUD_DICTADOS, ROUTES.ADMIN.CRUD_CONSULTAS, ROUTES.ADMIN.CRUD_INSCRIPCIONES][index]} key={text}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
@@ -86,9 +90,6 @@ export default function ResponsiveDrawer(props: Props) {
             </List>
         </div>
     );
-
-    // Remove this const when copying and pasting into your project.
-    const container = window !== undefined ? () => window().document.body : undefined;
 
     return (
         <Box sx={{ display: 'flex', width: "100%" }}>
@@ -114,34 +115,7 @@ export default function ResponsiveDrawer(props: Props) {
                         Admin Panel
                     </Typography>
                     <div>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="inherit"
-                        >
-                            <Icon>account_circle</Icon>
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                            <MenuItem onClick={handleClose}>My account</MenuItem>
-                        </Menu>
+                        <ProfileButton />
                     </div>
                 </Toolbar>
             </AppBar>
@@ -152,7 +126,6 @@ export default function ResponsiveDrawer(props: Props) {
             >
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    container={container}
                     variant="temporary"
                     open={mobileOpen}
                     onTransitionEnd={handleDrawerTransitionEnd}

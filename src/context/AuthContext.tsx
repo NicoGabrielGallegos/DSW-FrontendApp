@@ -1,6 +1,6 @@
 import { decodeToken } from "../utils/auth.ts"
 import { createContext, useContext, useEffect, useState } from "react"
-import type { User } from "../types/User.ts"
+import { EMPTY_USER, type User } from "../types/User.ts"
 
 type AuthContextType = {
     user: User | null,
@@ -8,6 +8,7 @@ type AuthContextType = {
     login: (token: string) => void,
     logout: () => void,
     isAuthenticated: () => boolean
+    isLoading: () => boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -15,7 +16,8 @@ const AuthContext = createContext<AuthContextType>({
     token: null,
     login: () => {},
     logout: () => {},
-    isAuthenticated: () => false
+    isAuthenticated: () => false,
+    isLoading: () => true,
 })
 
 export const AuthProvider = ({ children }: { children: any }) => {
@@ -35,17 +37,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
         }
 
     }, [])
-
-    //const loginByForm = async (rol: "alumno" | "docente", correo: string, password: string, navigateTo: string = "/dashboard") => {
-    //    const endpoint = rol == "alumno" ? API_ROUTES.ALUMNOS.LOGIN : rol == "docente" ? API_ROUTES.DOCENTES.LOGIN : ""
-    //    try {
-    //        const token = (await apiClient.post(endpoint, { body: { correo, password } })).data
-    //        localStorage.setItem("token", token)
-    //        navigate(navigateTo)
-    //    } catch (err: any) {
-    //        console.log(err.message);
-    //    }
-    //}
 
     const login = (token: string) => {
         const decoded = decodeToken(token)
@@ -77,7 +68,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
         // Si ya expiró
         if (decoded.exp * 1000 < Date.now()) {
-            localStorage.removeItem("token")
+            logout()
             return false
         }
 
@@ -85,8 +76,10 @@ export const AuthProvider = ({ children }: { children: any }) => {
         return true
     }
 
+    const isLoading = () => localStorage.getItem("token") !== null && (token === null || user === null)
+
     return (
-        <AuthContext.Provider value={{user, token, login, logout, isAuthenticated}}>
+        <AuthContext.Provider value={{user, token, login, logout, isAuthenticated, isLoading}}>
             {children}
         </AuthContext.Provider>
     )
