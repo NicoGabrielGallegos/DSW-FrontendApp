@@ -1,7 +1,7 @@
 import { Navigate } from "react-router"
-import { useAuth } from "../context/AuthContext.tsx"
-import { ROUTES } from "../utils/routes.ts"
-import type { Rol, User } from "../types/User.ts"
+import { useAuth } from "../../context/AuthContext.tsx";
+import { ROUTES } from "../../utils/routes.ts";
+import type { Rol } from "../../types/User.ts";
 
 export function PrivateRoute({ children, redirectTo = ROUTES.LOGIN, replace = true, authorizedRoles = ["alumno", "docente", "administrador"] }: { children?: any, redirectTo: string, replace?: boolean, authorizedRoles?: Rol[] }) {
     const auth = useAuth()

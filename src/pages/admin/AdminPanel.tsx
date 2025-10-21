@@ -19,11 +19,7 @@ import { ROUTES } from '../../utils/routes.ts';
 
 const drawerWidth = 240;
 
-interface Props {
-    window?: () => Window;
-}
-
-export default function ResponsiveDrawer(props: Props) {
+export default function ResponsiveDrawer() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
 

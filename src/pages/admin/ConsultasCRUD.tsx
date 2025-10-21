@@ -19,7 +19,7 @@ import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 import Alert from "@mui/material/Alert"
 import ControlledAutocomplete from "../../components/shared/ControlledAutocomplete.tsx"
-import LocalizedDateTimePicker from "../../components/LocalizedDateTimePicker.tsx"
+import LocalizedDateTimePicker from "../../components/shared/LocalizedDateTimePicker.tsx"
 
 type Dictado = D<Docente, Materia>
 type Consulta = C<Dictado>

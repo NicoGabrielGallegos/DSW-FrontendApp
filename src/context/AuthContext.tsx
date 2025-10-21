@@ -1,6 +1,6 @@
 import { decodeToken } from "../utils/auth.ts"
 import { createContext, useContext, useEffect, useState } from "react"
-import { EMPTY_USER, type User } from "../types/User.ts"
+import type { User } from "../types/User.ts"
 
 type AuthContextType = {
     user: User | null,
@@ -14,8 +14,8 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
     user: null,
     token: null,
-    login: () => {},
-    logout: () => {},
+    login: () => { },
+    logout: () => { },
     isAuthenticated: () => false,
     isLoading: () => true,
 })
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
     const isLoading = () => localStorage.getItem("token") !== null && (token === null || user === null)
 
     return (
-        <AuthContext.Provider value={{user, token, login, logout, isAuthenticated, isLoading}}>
+        <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, isLoading }}>
             {children}
         </AuthContext.Provider>
     )
