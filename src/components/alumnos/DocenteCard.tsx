@@ -53,7 +53,7 @@ export default function MateriaCard({ docente, options }: { docente: Docente, op
     }
 
     const handleVerConsultas = () => {
-        navigate(`${ROUTES.CONSULTAS}?materia=${docente._id}${options && options.materia ? `&materia=${options.materia}` : ""}`)
+        navigate(`${ROUTES.CONSULTAS}?docente=${docente._id}${options && options.materia ? `&materia=${options.materia}` : ""}`)
     }
     return (
         <Card elevation={3}>

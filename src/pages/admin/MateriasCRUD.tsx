@@ -99,6 +99,10 @@ export default function MateriasCRUD() {
         fetchMaterias()
     };
 
+    const onPressEnter = (event: React.KeyboardEvent<HTMLDivElement>, func: Function) => {
+        if (event.key === "Enter") func()
+    }
+
     return (
         <>
             {message && <Alert severity={severity} sx={{ mb: 2 }} onClose={() => setMessage(null)}>
@@ -127,7 +131,7 @@ export default function MateriasCRUD() {
                         })}
                         <TableRow>
                             <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
-                            <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth /></TableCell>
+                            <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth onKeyDown={event => onPressEnter(event, createMateria)} /></TableCell>
                             <TableCell>
                                 <IconButton onClick={createMateria} size="small"><Icon color="primary">add</Icon></IconButton>
                             </TableCell>

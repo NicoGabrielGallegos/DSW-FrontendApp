@@ -73,19 +73,24 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                 ))}
             </List>
             <Divider />
-            <List>
-                <RouterLink to={ROUTES.ADMIN.ROOT} >
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Icon>admin_panel_settings</Icon>
-                            </ListItemIcon>
-                            <ListItemText primary="Admin" />
-                        </ListItemButton>
-                    </ListItem>
-                </RouterLink>
-            </List>
-            <Divider />
+            {
+                auth.user?.rol === "administrador" &&
+                <>
+                    <List>
+                        <RouterLink to={ROUTES.ADMIN.ROOT} >
+                            <ListItem disablePadding>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <Icon>admin_panel_settings</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Admin" />
+                                </ListItemButton>
+                            </ListItem>
+                        </RouterLink>
+                    </List>
+                    <Divider />
+                </>
+            }
         </div>
     );
 
