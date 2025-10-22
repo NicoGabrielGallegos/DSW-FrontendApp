@@ -3,7 +3,7 @@ import "./commons/DateExtensions.tsx"
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import LoginAlumno from './pages/LoginAlumno.tsx'
 import LoginDocente from './pages/LoginDocente.tsx'
-import AdminPanel from './pages/admin/AdminPanel.tsx'
+import AdminPanel from './components/admin/AdminPanel.tsx'
 import Materias from './pages/Materias.tsx'
 import Home from './pages/Home.tsx'
 import { PrivateRoute } from './components/shared/PrivateRouter.tsx'
@@ -32,6 +32,7 @@ function App() {
               element={<Navigate to={ROUTES.LOGIN_ALUMNOS} replace />}
             />
           </Route>
+
           <Route path={ROUTES.HOME} element=
             {
               <PrivateRoute redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
@@ -60,20 +61,31 @@ function App() {
               </PrivateRoute>
             }
           />
+          
           <Route path={ROUTES.ADMIN.ROOT} element=
             {
-              <PrivateRoute authorizedRoles={["administrador"]} redirectTo={ROUTES.HOME} replace>
+              <PrivateRoute authorizedRoles={["administrador"]} redirectTo={ROUTES.CONSULTAS} replace>
                 <AdminPanel />
               </PrivateRoute>
             }
           >
+            <Route index element={<Navigate to={ROUTES.ADMIN.CRUD_ALUMNOS} replace />} />
             <Route path={ROUTES.ADMIN.CRUD_ALUMNOS} element={<AlumnosCRUD />} />
             <Route path={ROUTES.ADMIN.CRUD_DOCENTES} element={<DocentesCRUD />} />
             <Route path={ROUTES.ADMIN.CRUD_MATERIAS} element={<MateriasCRUD />} />
             <Route path={ROUTES.ADMIN.CRUD_DICTADOS} element={<DictadosCRUD />} />
             <Route path={ROUTES.ADMIN.CRUD_INSCRIPCIONES} element={<InscripcionesCRUD />} />
             <Route path={ROUTES.ADMIN.CRUD_CONSULTAS} element={<ConsultasCRUD />} />
+            <Route
+              path="*"
+              element={<Navigate to={ROUTES.ADMIN.CRUD_ALUMNOS} replace />}
+            />
           </Route>
+          
+          <Route
+            path="*"
+            element={<Navigate to={ROUTES.LOGIN_ALUMNOS} replace />}
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

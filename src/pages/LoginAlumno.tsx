@@ -48,7 +48,7 @@ export default function LoginAlumno() {
     }
 
     return (
-        auth.isAuthenticated() ? <Navigate to={ROUTES.HOME} /> :
+        auth.isAuthenticated() ? <Navigate to={ROUTES.CONSULTAS} /> :
             <Box sx={{ margin: "0 auto", textAlign: "center", width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Paper elevation={4} sx={{ display: "flex", width: "80%", minWidth: 275, maxWidth: 350, m: 1, p: 4, alignItems: "center", justifyContent: "center" }}>
                     <Grid container spacing={0} alignItems={"center"}>

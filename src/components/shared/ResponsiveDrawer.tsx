@@ -14,7 +14,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router';
-import ProfileButton from './ProfileButton.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { ROUTES } from '../../utils/routes.ts';
 
@@ -44,40 +43,12 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
     const drawer = (
         <div>
             <Toolbar />
-            <Divider />
-            <List>
-                <RouterLink to={ROUTES.HOME} >
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Icon>book</Icon>
-                            </ListItemIcon>
-                            <ListItemText primary="Home" />
-                        </ListItemButton>
-                    </ListItem>
-                </RouterLink>
-            </List>
-            <Divider />
-            <List>
-                {['Materias', 'Docentes', 'Consultas'].map((text, index) => (
-                    <RouterLink to={[ROUTES.MATERIAS, ROUTES.DOCENTES, ROUTES.CONSULTAS][index]} key={text}>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <Icon>{["auto_stories", "people_alt", "calendar_month"][index]}</Icon>
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    </RouterLink>
-                ))}
-            </List>
-            <Divider />
             {
                 auth.user?.rol === "administrador" &&
                 <>
+                    <Divider />
                     <List>
-                        <RouterLink to={ROUTES.ADMIN.ROOT} >
+                        <RouterLink to={ROUTES.ADMIN.CRUD_ALUMNOS} >
                             <ListItem disablePadding>
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -88,9 +59,35 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                             </ListItem>
                         </RouterLink>
                     </List>
-                    <Divider />
                 </>
             }
+            <Divider />
+            <List>
+                {['Consultas', 'Docentes', 'Materias'].map((text, index) => (
+                    <RouterLink to={[ROUTES.CONSULTAS, ROUTES.DOCENTES, ROUTES.MATERIAS][index]} key={text}>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <Icon>{["calendar_month", "co_present", "auto_stories"][index]}</Icon>
+                                </ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItemButton>
+                        </ListItem>
+                    </RouterLink>
+                ))}
+            </List>
+            <Divider />
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={auth.logout}>
+                        <ListItemIcon>
+                            <Icon>logout</Icon>
+                        </ListItemIcon>
+                        <ListItemText primary="Log out" />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+            <Divider />
         </div>
     );
 
@@ -117,9 +114,6 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         {title}
                     </Typography>
-                    <div>
-                        <ProfileButton />
-                    </div>
                 </Toolbar>
             </AppBar>
             <Box

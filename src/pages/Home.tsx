@@ -6,7 +6,6 @@ import Icon from "@mui/material/Icon";
 import Grid from "@mui/material/Grid";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import ProfileButton from "../components/shared/ProfileButton.tsx";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext.tsx";
 import { EMPTY_USER } from "../types/User.ts";
@@ -52,7 +51,6 @@ export default function Home() {
                     <Typography variant="h6" color="inherit" component="div" p={2} flexGrow={1}>
                         {`Hola, ${user.nombre} ${user.apellido}!`}
                     </Typography>
-                    <ProfileButton />
                 </Toolbar>
             </AppBar>
             <Typography variant="h4" color="textSecondary" sx={{ mt: { xs: 4, md: 12 }, mb: { xs: 4, md: 0 } }}>¿Qué te interesa ver?</Typography>

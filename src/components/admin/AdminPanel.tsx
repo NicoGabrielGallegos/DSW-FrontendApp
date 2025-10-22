@@ -14,14 +14,15 @@ import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink, Outlet } from 'react-router';
-import ProfileButton from '../../components/shared/ProfileButton.tsx';
 import { ROUTES } from '../../utils/routes.ts';
+import { useAuth } from '../../context/AuthContext.tsx';
 
 const drawerWidth = 240;
 
 export default function ResponsiveDrawer() {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
+    const auth = useAuth()
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -43,13 +44,13 @@ export default function ResponsiveDrawer() {
             <Toolbar />
             <Divider />
             <List>
-                <RouterLink to={ROUTES.HOME}>
+                <RouterLink to={ROUTES.CONSULTAS}>
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
-                                <Icon>book</Icon>
+                                <Icon>home</Icon>
                             </ListItemIcon>
-                            <ListItemText primary="Home" />
+                            <ListItemText primary="App" />
                         </ListItemButton>
                     </ListItem>
                 </RouterLink>
@@ -61,7 +62,7 @@ export default function ResponsiveDrawer() {
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <Icon>{["person", "person", "assignment"][index]}</Icon>
+                                    <Icon>{["people_alt", "co_present", "auto_stories"][index]}</Icon>
                                 </ListItemIcon>
                                 <ListItemText primary={text} />
                             </ListItemButton>
@@ -76,7 +77,7 @@ export default function ResponsiveDrawer() {
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <Icon>list</Icon>
+                                    <Icon>{["school", "calendar_month", "edit_note"][index]}</Icon>
                                 </ListItemIcon>
                                 <ListItemText primary={text} />
                             </ListItemButton>
@@ -84,6 +85,18 @@ export default function ResponsiveDrawer() {
                     </RouterLink>
                 ))}
             </List>
+            <Divider />
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={auth.logout}>
+                        <ListItemIcon>
+                            <Icon>logout</Icon>
+                        </ListItemIcon>
+                        <ListItemText primary="Log out" />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+            <Divider />
         </div>
     );
 
@@ -110,9 +123,6 @@ export default function ResponsiveDrawer() {
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         Admin Panel
                     </Typography>
-                    <div>
-                        <ProfileButton />
-                    </div>
                 </Toolbar>
             </AppBar>
             <Box
