@@ -23,7 +23,7 @@ const style = {
     p: 4,
 };
 
-export default function ConsultaInscripcionModal({ data, open, handleClose, handleInscripcion, done, alert, onCloseAlert }: { data: { consulta?: Consulta, materia?: Materia, docente?: Docente }, open: boolean, handleClose: () => void, handleInscripcion: () => void, done: boolean, alert: {message?: string, severity?: "error" | "success"}, onCloseAlert: () => void }) {
+export default function InscripcionModal({ data, open, handleClose, handleInscripcion, done, alert, onCloseAlert }: { data: { consulta?: Consulta, materia?: Materia, docente?: Docente }, open: boolean, handleClose: () => void, handleInscripcion: () => void, done: boolean, alert: {message?: string, severity?: "error" | "success"}, onCloseAlert: () => void }) {
     let horaInicio = data.consulta ? new Date(data.consulta.horaInicio) : undefined
     let horaFin = data.consulta ? new Date(data.consulta.horaFin) : undefined
 

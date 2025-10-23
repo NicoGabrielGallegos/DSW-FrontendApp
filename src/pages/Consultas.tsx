@@ -10,19 +10,22 @@ import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
-import type { Consulta as C } from "../types/Consulta.ts";
+import { EstadoConsulta, type Consulta as C } from "../types/Consulta.ts";
 import LocalizedDatePicker from "../components/shared/LocalizedDatePicker.tsx";
 import ControlledAutocomplete from "../components/shared/ControlledAutocomplete.tsx";
 import TablePagination from "@mui/material/TablePagination";
 import type { Dictado } from "../types/Dictado.ts";
-import ConsultaCard, { ConsultaCardSkeleton } from "../components/alumnos/ConsultaCard.tsx";
-import ConsultaInscripcionModal from "../components/alumnos/ConsultaInscripcionModal.tsx";
+import CardForAlumno, { ConsultaCardSkeleton as CardSkeletonForAlumno } from "../components/alumnos/ConsultaCard.tsx";
+import CardForDocente, { ConsultaCardSkeleton as CardSkeletonForDocente } from "../components/docentes/ConsultaCard.tsx";
+import InscripcionModal from "../components/alumnos/InscripcionModal.tsx";
 import { decodeToken } from "../utils/auth.ts";
 import LocalizedTimePicker from "../components/shared/LocalizedTimePicker.tsx";
+import { useAuth } from "../context/AuthContext.tsx";
+import type { Rol } from "../types/User.ts";
 
 type Consulta = C<Dictado<Docente, Materia>>
 
-export default function Materias() {
+export default function Consultas() {
     // Colecciones de materias, docentes y consultas
     const [materias, setMaterias] = useState<Materia[]>([])
     const [docentes, setDocentes] = useState<Docente[]>([])
@@ -53,6 +56,9 @@ export default function Materias() {
     const [limit, setLimit] = useState(5)
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
+    // Auth
+    const auth = useAuth()
+
     let limitOptions = [5, 10, 15, 20, 25]
 
     function setVariablesFromParams() {
@@ -139,7 +145,7 @@ export default function Materias() {
                 route = API_ROUTES.CONSULTAS.FIND_ALL
             }
 
-            let params: { p?: string, l?: string, i?: string, f?: string, populate: string } = { populate: "docente,materia" }
+            let params: { p?: string, l?: string, i?: string, f?: string, populate: string, filter: string } = { populate: "docente,materia", filter: `estado:${EstadoConsulta.Programada}` }
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
@@ -170,6 +176,16 @@ export default function Materias() {
         }
         initPage()
     }, [])
+
+    useEffect(() => {
+        async function reloadPage() {
+            if (!searchParams.get("docente")) setValueDocente(null)
+            await fetchMaterias()
+            await fetchDocentes()
+            await fetchConsultas()
+        }
+        reloadPage()
+    }, [searchParams])
 
     useEffect(() => {
         async function reloadMaterias() {
@@ -251,7 +267,7 @@ export default function Materias() {
         value = new Date(hoy)
         value.setHours(horas, minutos)
         if (valueHoraFin && value > valueHoraFin) {
-            setValueHoraFin(value.addMinutes(1))
+            setValueHoraFin(new Date(value).addMinutes(1))
         }
         setValueHoraInicio(value)
     }
@@ -266,7 +282,7 @@ export default function Materias() {
             value = value.addDays(1)
         }
         if (valueHoraInicio && valueHoraInicio > value) {
-            setValueHoraInicio(value.addMinutes(-1))
+            setValueHoraInicio(new Date(value).addMinutes(-1))
         }
         setValueHoraFin(value)
     }
@@ -334,7 +350,8 @@ export default function Materias() {
                 {Array.from(new Array(5)).map((_skeleton, idx) => {
                     return (
                         <Grid size={12} key={idx}>
-                            <ConsultaCardSkeleton />
+                            {auth.user?.rol as Rol === "alumno" && <CardSkeletonForAlumno />}
+                            {["docente", "administrador"].includes(auth.user?.rol as Rol) && <CardSkeletonForDocente />}
                             {/*<Skeleton variant="rounded" width={"100%"} sx={{height: {xs: 80, md: 92, lg: 65}}} />*/}
                         </Grid>
                     )
@@ -354,7 +371,12 @@ export default function Materias() {
                 {consultas.map((consulta, idx) => {
                     return (
                         <Grid size={12} key={idx}>
-                            <ConsultaCard consulta={consulta} onClickInscribirse={handleOpenInscripcionModal} />
+                            {auth.user?.rol as Rol === "alumno" &&
+                                <CardForAlumno consulta={consulta} onClickInscribirse={handleOpenInscripcionModal} />
+                            }
+                            {["docente", "administrador"].includes(auth.user?.rol as Rol) &&
+                                <CardForDocente consulta={consulta} />
+                            }
                         </Grid>
                     )
                 })}
@@ -389,7 +411,7 @@ export default function Materias() {
                                     onInputChange={(_event: any, newInputValue: any) => {
                                         setInputDocente(newInputValue);
                                     }}
-                                    sx={{textAlign: "left"}}
+                                    sx={{ textAlign: "left" }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
@@ -449,7 +471,7 @@ export default function Materias() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeLimit}
                 />
-                <ConsultaInscripcionModal data={inscripcionModalData} open={openInscripcionModal} handleClose={handleCloseInscripcionModal} handleInscripcion={handleInscripcion} done={doneInscripcion} alert={alert} onCloseAlert={() => setAlert({})} />
+                <InscripcionModal data={inscripcionModalData} open={openInscripcionModal} handleClose={handleCloseInscripcionModal} handleInscripcion={handleInscripcion} done={doneInscripcion} alert={alert} onCloseAlert={() => setAlert({})} />
             </ResponsiveDrawer>
         </>
     )

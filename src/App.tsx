@@ -17,6 +17,8 @@ import AlumnosCRUD from './pages/admin/AlumnosCRUD.tsx'
 import InscripcionesCRUD from './pages/admin/InscripcionesCRUD.tsx'
 import ConsultasCRUD from './pages/admin/ConsultasCRUD.tsx'
 import { ROUTES } from './utils/routes.ts'
+import Consulta from './pages/Consulta.tsx'
+import NuevaConsulta from './pages/NuevaConsulta.tsx'
 
 function App() {
   return (
@@ -58,6 +60,20 @@ function App() {
             {
               <PrivateRoute redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
                 <Consultas />
+              </PrivateRoute>
+            }
+          />
+          <Route path={ROUTES.CONSULTA_BY_ID(":id")} element=
+            {
+              <PrivateRoute redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
+                <Consulta />
+              </PrivateRoute>
+            }
+          />
+          <Route path={ROUTES.CONSULTA_NUEVA} element=
+            {
+              <PrivateRoute authorizedRoles={["docente"]} redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
+                <NuevaConsulta />
               </PrivateRoute>
             }
           />

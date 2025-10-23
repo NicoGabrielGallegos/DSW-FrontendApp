@@ -9,6 +9,9 @@ import type { Consulta as C } from '../../types/Consulta.ts';
 import type { Dictado as D } from '../../types/Dictado.ts';
 import type { Materia } from '../../types/Materia.ts';
 import type { Docente } from '../../types/Docente.ts';
+import { useNavigate } from 'react-router';
+import { ROUTES } from '../../utils/routes.ts';
+import { useAuth } from '../../context/AuthContext.tsx';
 
 type Consulta = C<D<Docente, Materia>>
 
@@ -53,11 +56,18 @@ export function ConsultaCardSkeleton() {
     );
 }
 
-export default function ConsultaCard({ consulta, onClickInscribirse }: { consulta: Consulta, onClickInscribirse: (inscripcionData: { consulta?: Consulta, materia?: Materia, docente?: Docente }) => void }) {
+export default function ConsultaCard({ consulta }: { consulta: Consulta }) {
     let horaInicio = new Date(consulta.horaInicio)
     let horaFin = new Date(consulta.horaFin)
     let materia = (consulta.dictado.materia)
     let docente = (consulta.dictado.docente)
+
+    const navigate = useNavigate()
+    const auth = useAuth()
+
+    const handleVerInscripciones = () => {
+        navigate(`${ROUTES.CONSULTA_BY_ID(consulta._id)}`, { state: { consulta } })
+    }
 
     return (
         <Card elevation={3}>
@@ -105,12 +115,13 @@ export default function ConsultaCard({ consulta, onClickInscribirse }: { consult
                             </Grid>
                         </Grid>
                     </Grid>
-
-                    <Grid size={{ xs: 12, md: "auto" }}>
-                        <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                            <Button size="small" onClick={() => onClickInscribirse({consulta, materia, docente})} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Inscribirse</Button>
-                        </CardActions>
-                    </Grid>
+                    {(auth.user?.rol === "administrador" || auth.user?.id === consulta.dictado.docente._id) &&
+                        <Grid size={{ xs: 12, md: "auto" }}>
+                            <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
+                                <Button size="small" onClick={handleVerInscripciones} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver Inscripciones</Button>
+                            </CardActions>
+                        </Grid>
+                    }
                 </Grid>
             </CardContent>
         </Card>

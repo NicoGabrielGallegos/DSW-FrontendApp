@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Input from "@mui/material/Input";
-import { Link, Navigate, useNavigate } from "react-router";
+import { Link, Navigate } from "react-router";
 import { API_ROUTES } from "../api/endpoints.ts";
 import { apiClient } from "../api/apiClient.ts";
 import { useAuth } from "../context/AuthContext.tsx";

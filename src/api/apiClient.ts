@@ -13,8 +13,6 @@ async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH
     const defaultHeaders = {
         "Content-Type": "application/json"
     }
-
-    console.log(url);
     
 
     // Intentar recuperar los recursos
@@ -33,7 +31,6 @@ async function request(endpoint: string, method: "GET" | "POST" | "PUT" | "PATCH
 
         return data
     } catch (err: any) {
-        console.error("API Error:", err)
         throw err
     }
 }

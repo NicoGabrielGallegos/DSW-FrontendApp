@@ -14,7 +14,7 @@ import { useSearchParams } from "react-router";
 import TablePagination from "@mui/material/TablePagination";
 import ControlledAutocomplete from "../components/shared/ControlledAutocomplete.tsx";
 
-export default function Materias() {
+export default function Docentes() {
     // Colecciones de materias y docentes
     const [docentes, setDocentes] = useState<Docente[]>([])
     const [materias, setMaterias] = useState<Materia[]>([])

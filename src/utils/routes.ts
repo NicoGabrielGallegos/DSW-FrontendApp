@@ -7,6 +7,8 @@ export const ROUTES = {
     MATERIAS: "/materias",
     DOCENTES: "/docentes",
     CONSULTAS: "/consultas",
+    CONSULTA_BY_ID: (id: string) => `/consultas/${id}`,
+    CONSULTA_NUEVA: "/nueva_consulta",
     ADMIN: {
         ROOT: "/admin",
         CRUD_ALUMNOS: "/admin/alumnos",

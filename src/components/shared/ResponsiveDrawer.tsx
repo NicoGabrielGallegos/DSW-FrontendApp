@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { ROUTES } from '../../utils/routes.ts';
+import type { Rol } from '../../types/User.ts';
 
 const drawerWidth = 240;
 
@@ -76,6 +77,26 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                     </RouterLink>
                 ))}
             </List>
+            {
+                auth.user?.rol === "docente" &&
+                <>
+                    <Divider />
+                    <List>
+                        {['Mis Consultas', 'Crear Consulta'].map((text, index) => (
+                            <RouterLink to={[{pathname: ROUTES.CONSULTAS, search: `?docente=${auth.user?.id as Rol}`}, ROUTES.CONSULTA_NUEVA][index]} key={text}>
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <Icon>{["calendar_month", "add_circle_outline"][index]}</Icon>
+                                        </ListItemIcon>
+                                        <ListItemText primary={text} />
+                                    </ListItemButton>
+                                </ListItem>
+                            </RouterLink>
+                        ))}
+                    </List>
+                </>
+            }
             <Divider />
             <List>
                 <ListItem disablePadding>
@@ -121,7 +142,6 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 aria-label="mailbox folders"
             >
-                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
                     variant="temporary"
                     open={mobileOpen}
@@ -133,7 +153,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                     }}
                     slotProps={{
                         root: {
-                            keepMounted: true, // Better open performance on mobile.
+                            keepMounted: true,
                         },
                     }}
                 >
