@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
 import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
@@ -22,8 +20,45 @@ import { decodeToken } from "../utils/auth.ts";
 import LocalizedTimePicker from "../components/shared/LocalizedTimePicker.tsx";
 import { useAuth } from "../context/AuthContext.tsx";
 import type { Rol } from "../types/User.ts";
+import ControlledSelect from "../components/shared/ControlledSelect.tsx";
+import type { SelectChangeEvent } from "@mui/material/Select";
 
 type Consulta = C<Dictado<Docente, Materia>>
+
+let sortingOptions: { value: string, text: string }[] = [
+    {
+        text: "Materia [A-Z]",
+        value: "dictado.materia.descripcion:1,dictado.docente.apellido:1,dictado.docente.nombre:1,horaInicio:1,horaFin:1"
+    },
+    {
+        text: "Materia [Z-A]",
+        value: "dictado.materia.descripcion:-1,dictado.docente.apellido:1,dictado.docente.nombre:1,horaInicio:1,horaFin:1"
+    },
+    {
+        text: "Nombre Docente [A-Z]",
+        value: "dictado.docente.nombre:1,dictado.docente.apellido:1,dictado.materia.descripcion:1,horaInicio:1,horaFin:1"
+    },
+    {
+        text: "Nombre Docente [Z-A]",
+        value: "dictado.docente.nombre:-1,dictado.docente.apellido:1,dictado.materia.descripcion:1,horaInicio:1,horaFin:1"
+    },
+    {
+        text: "Apellido Docente [A-Z]",
+        value: "dictado.docente.apellido:1,dictado.docente.nombre:1,dictado.materia.descripcion:1,horaInicio:1,horaFin:1"
+    },
+    {
+        text: "Apellido Docente [Z-A]",
+        value: "dictado.docente.apellido:-1,dictado.docente.nombre:1,dictado.materia.descripcion:1,horaInicio:1,horaFin:1"
+    },
+    {
+        text: "Consulta más próxima",
+        value: "horaInicio:1,horaFin:1,dictado.materia.descripcion:1,dictado.docente.apellido:1,dictado.docente.nombre:1"
+    },
+    {
+        text: "Consulta más lejanas",
+        value: "horaInicio:-1,horaFin:-1,dictado.materia.descripcion:1,dictado.docente.apellido:1,dictado.docente.nombre:1"
+    },
+]
 
 export default function Consultas() {
     // Colecciones de materias, docentes y consultas
@@ -42,6 +77,8 @@ export default function Consultas() {
     const [valueHoraFin, setValueHoraFin] = useState<Date | null>(null)
     const hoy = new Date()
     hoy.setHours(0, 0, 0, 0)
+    // Variables para el selector de sorting
+    const [valueSort, setSort] = useState<string>(sortingOptions[0].value)
     // Variables de control sobre cargas y errores
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
@@ -145,7 +182,7 @@ export default function Consultas() {
                 route = API_ROUTES.CONSULTAS.FIND_ALL
             }
 
-            let params: { p?: string, l?: string, i?: string, f?: string, populate: string, filter: string } = { populate: "docente,materia", filter: `estado:${EstadoConsulta.Programada}` }
+            let params: { p?: string, l?: string, i?: string, f?: string, populate: string, filter: string, sort: string } = { populate: "docente,materia", filter: `estado:${EstadoConsulta.Programada}`, sort: valueSort }
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
@@ -232,6 +269,13 @@ export default function Consultas() {
         reloadConsultas()
     }, [valueFecha, valueHoraInicio, valueHoraFin])
 
+    useEffect(() => {
+        async function reloadDocentes() {
+            await fetchConsultas()
+        }
+        reloadDocentes()
+    }, [valueSort])
+
     const onSelectDocente = (_event: any, value: { id: string, label: string }) => {
         if (value) {
             searchParams.set("docente", value.id)
@@ -285,6 +329,11 @@ export default function Consultas() {
             setValueHoraInicio(new Date(value).addMinutes(-1))
         }
         setValueHoraFin(value)
+    }
+
+    const onSelectSort = (event: SelectChangeEvent) => {
+        setSort(event.target.value as string)
+        console.log(event.target.value);
     }
 
     const getNombreDocente = (id: string) => {
@@ -388,17 +437,7 @@ export default function Consultas() {
         <>
             <ResponsiveDrawer title="Consultas">
                 <Grid container sx={{ alignItems: "center" }} spacing={2}>
-                    <Grid sx={{ display: { xs: "none", lg: "inline-flex" } }}>
-                        <IconButton
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            color="inherit"
-                        >
-                            <Icon>filter_list</Icon>
-                        </IconButton>
-                    </Grid>
-                    <Grid container size={{ xs: 12, lg: 9, xl: 8 }}>
+                    <Grid container size={{ xs: 12, md: "grow" }}>
                         <Grid container size={12}>
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <ControlledAutocomplete
@@ -454,6 +493,17 @@ export default function Consultas() {
                                 </Grid>
                             </Grid>
                         </Grid>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: "auto" }}>
+                        <ControlledSelect
+                            id="sort"
+                            options={sortingOptions}
+                            label="Orden"
+                            value={valueSort}
+                            onChange={onSelectSort}
+                            size="small"
+                            sx={{minWidth: 210}}
+                        />
                     </Grid>
                 </Grid>
                 <Divider sx={{ my: 3 }}></Divider>

@@ -5,14 +5,33 @@ import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient.ts";
 import { API_ROUTES } from "../api/endpoints.ts";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
 import Divider from "@mui/material/Divider";
 import type { Materia } from "../types/Materia.ts";
 import type { Docente } from "../types/Docente.ts";
 import { useSearchParams } from "react-router";
 import TablePagination from "@mui/material/TablePagination";
 import ControlledAutocomplete from "../components/shared/ControlledAutocomplete.tsx";
+import type { SelectChangeEvent } from "@mui/material/Select";
+import ControlledSelect from "../components/shared/ControlledSelect.tsx";
+
+let sortingOptions: { value: string, text: string }[] = [
+    {
+        text: "Nombre [A-Z]",
+        value: "nombre:1"
+    },
+    {
+        text: "Nombre [Z-A]",
+        value: "nombre:-1"
+    },
+    {
+        text: "Apellido [A-Z]",
+        value: "apellido:1"
+    },
+    {
+        text: "Apellido [Z-A]",
+        value: "apellido:-1"
+    },
+]
 
 export default function Docentes() {
     // Colecciones de materias y docentes
@@ -21,6 +40,8 @@ export default function Docentes() {
     // Variables para el selector de materia
     const [valueMateria, setValueMateria] = useState<{ id: string, label: string } | null>(null)
     const [inputMateria, setInputMateria] = useState<string>("")
+    // Variables para el selector de sorting
+    const [valueSort, setSort] = useState<string>(sortingOptions[0].value)
     // Variables de control sobre cargas y errores
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -75,7 +96,7 @@ export default function Docentes() {
                 route = API_ROUTES.DOCENTES.FIND_BY_MATERIA(materia)
             }
 
-            let params: { p?: string, l?: string } = {}
+            let params: { p?: string, l?: string, sort: string } = { sort: valueSort }
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
@@ -107,7 +128,7 @@ export default function Docentes() {
             await fetchDocentes()
         }
         reloadDocentes()
-    }, [valueMateria])
+    }, [valueMateria, valueSort])
 
     const onSelectMateria = (_event: any, value: any) => {
         if (value) {
@@ -117,6 +138,11 @@ export default function Docentes() {
         }
         setValueMateria(value)
         setSearchParams(searchParams, { replace: true })
+    }
+
+    const onSelectSort = (event: SelectChangeEvent) => {
+        setSort(event.target.value as string)
+        console.log(event.target.value);
     }
 
     const handleChangePage = (_event: unknown, newPage: number) => {
@@ -171,18 +197,8 @@ export default function Docentes() {
 
     return (
         <ResponsiveDrawer title="Materias">
-            <Grid container sx={{ alignItems: "center" }}>
-                <Grid size={"auto"}>
-                    <IconButton
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        color="inherit"
-                    >
-                        <Icon>filter_list</Icon>
-                    </IconButton>
-                </Grid>
-                <Grid size={"grow"}>
+            <Grid container sx={{ alignItems: "center" }} spacing={2}>
+                <Grid size={{ xs: 12, md: "grow" }}>
                     <ControlledAutocomplete
                         id="materia"
                         options={materias.map(materia => { return { id: materia._id, label: materia.descripcion } })}
@@ -193,6 +209,16 @@ export default function Docentes() {
                         onInputChange={(_event: any, newInputValue: any) => {
                             setInputMateria(newInputValue);
                         }}
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, md: "auto" }}>
+                    <ControlledSelect
+                        id="sort"
+                        options={sortingOptions}
+                        label="Orden"
+                        value={valueSort}
+                        onChange={onSelectSort}
+                        size="small"
                     />
                 </Grid>
             </Grid>
