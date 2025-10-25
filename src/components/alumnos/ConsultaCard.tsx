@@ -71,7 +71,7 @@ export default function ConsultaCard({ consulta, onClickInscribirse }: { consult
                 <Grid container alignItems={"center"}>
                     <Grid container size={{ xs: 12, md: "grow" }} sx={{ textAlign: { xs: "center", md: "left" } }}>
                         <Grid size={{ xs: 12, xl: "auto" }}>
-                            <Typography variant="h5" component="div" align="inherit" sx={{ py: { xl: 2 }, pt: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                            <Typography variant="h6" component="div" align="inherit" sx={{ py: { xl: 2 }, pt: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
                                 {materia?.descripcion || ""}
                             </Typography>
                         </Grid>

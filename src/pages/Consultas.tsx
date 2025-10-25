@@ -55,7 +55,7 @@ let sortingOptions: { value: string, text: string }[] = [
         value: "horaInicio:1,horaFin:1,dictado.materia.descripcion:1,dictado.docente.apellido:1,dictado.docente.nombre:1"
     },
     {
-        text: "Consulta más lejanas",
+        text: "Consulta más lejana",
         value: "horaInicio:-1,horaFin:-1,dictado.materia.descripcion:1,dictado.docente.apellido:1,dictado.docente.nombre:1"
     },
 ]
@@ -221,6 +221,7 @@ export default function Consultas() {
             await fetchDocentes()
             await fetchConsultas()
         }
+        console.log(searchParams);
         reloadPage()
     }, [searchParams])
 

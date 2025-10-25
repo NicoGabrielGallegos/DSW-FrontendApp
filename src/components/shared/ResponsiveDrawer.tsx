@@ -83,7 +83,7 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
                     <Divider />
                     <List>
                         {['Mis Consultas', 'Crear Consulta'].map((text, index) => (
-                            <RouterLink to={[{pathname: ROUTES.CONSULTAS, search: `?docente=${auth.user?.id as Rol}`}, ROUTES.CONSULTA_NUEVA][index]} key={text}>
+                            <RouterLink to={[`${ROUTES.CONSULTAS}?docente=${auth.user?.id as Rol}&p=1&l=5`, ROUTES.CONSULTA_NUEVA][index]} key={text}>
                                 <ListItem disablePadding>
                                     <ListItemButton>
                                         <ListItemIcon>

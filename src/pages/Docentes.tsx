@@ -149,7 +149,7 @@ export default function Docentes() {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
         setSearchParams(searchParams, { replace: true })
-        fetchMaterias()
+        fetchDocentes()
     };
 
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +158,7 @@ export default function Docentes() {
         searchParams.set("l", event.target.value)
         searchParams.set("p", "1")
         setSearchParams(searchParams, { replace: true })
-        fetchMaterias()
+        fetchDocentes()
     };
 
     let content = <></>

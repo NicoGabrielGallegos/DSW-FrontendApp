@@ -65,7 +65,7 @@ export default function ConsultaCard({ consulta }: { consulta: Consulta }) {
     const navigate = useNavigate()
     const auth = useAuth()
 
-    const handleVerInscripciones = () => {
+    const handleVerDetalles = () => {
         navigate(`${ROUTES.CONSULTA_BY_ID(consulta._id)}`, { state: { consulta } })
     }
 
@@ -81,11 +81,11 @@ export default function ConsultaCard({ consulta }: { consulta: Consulta }) {
                 <Grid container alignItems={"center"}>
                     <Grid container size={{ xs: 12, md: "grow" }} sx={{ textAlign: { xs: "center", md: "left" } }}>
                         <Grid size={{ xs: 12, xl: "auto" }}>
-                            <Typography variant="h5" component="div" align="inherit" sx={{ py: { xl: 2 }, pt: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                            <Typography variant="h6" component="div" align="inherit" sx={{ py: { xl: 2 }, pt: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
                                 {materia?.descripcion || ""}
                             </Typography>
                         </Grid>
-                        <Grid container size={{ xs: 12, xl: "auto" }} alignItems={"center"} sx={{ py: { md: 1, lg: 2 }, ml: { xl: 2 }, mb: { md: 1, lg: 0 } }}>
+                        <Grid container size={{ xs: 12, xl: "auto" }} alignItems={"center"} sx={{ py: { md: 1, lg: 2 }, ml: { xl: 2 }, mb: { sm: 1, lg: 0 } }}>
                             <Grid size={{ xs: 12, lg: "auto", xl: "auto" }} sx={{ mb: { md: 1, lg: 0 } }}>
                                 <Typography component="div" color="textSecondary" align="inherit" fontSize={{ xs: "0.8rem", md: "1rem" }} mr={{ lg: 2 }}>
                                     Docente: <Typography color="textPrimary" component="span" fontSize="inherit">{docente?.apellido || ""} {docente?.nombre || ""}</Typography>
@@ -117,8 +117,8 @@ export default function ConsultaCard({ consulta }: { consulta: Consulta }) {
                     </Grid>
                     {(auth.user?.rol === "administrador" || auth.user?.id === consulta.dictado.docente._id) &&
                         <Grid size={{ xs: 12, md: "auto" }}>
-                            <CardActions sx={{ justifyContent: { xs: "center", md: "right" } }}>
-                                <Button size="small" onClick={handleVerInscripciones} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver Inscripciones</Button>
+                            <CardActions sx={{ justifyContent: { xs: "center", md: "right" }}}>
+                                <Button size="small" onClick={handleVerDetalles} sx={{ py: { md: 0.5 }, fontSize: { xs: "0.7rem", md: "0.8rem" } }}>Ver detalles</Button>
                             </CardActions>
                         </Grid>
                     }

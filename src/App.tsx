@@ -19,6 +19,7 @@ import ConsultasCRUD from './pages/admin/ConsultasCRUD.tsx'
 import { ROUTES } from './utils/routes.ts'
 import Consulta from './pages/Consulta.tsx'
 import NuevaConsulta from './pages/NuevaConsulta.tsx'
+import ModificarConsulta from './pages/ModificarConsulta.tsx'
 
 function App() {
   return (
@@ -74,6 +75,13 @@ function App() {
             {
               <PrivateRoute authorizedRoles={["docente"]} redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
                 <NuevaConsulta />
+              </PrivateRoute>
+            }
+          />
+          <Route path={ROUTES.CONSULTA_EDIT} element=
+            {
+              <PrivateRoute authorizedRoles={["docente"]} redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
+                <ModificarConsulta />
               </PrivateRoute>
             }
           />

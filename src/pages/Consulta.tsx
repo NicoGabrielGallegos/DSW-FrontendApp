@@ -24,6 +24,7 @@ import Box from "@mui/material/Box"
 import { ROUTES } from "../utils/routes.ts"
 import NavBar from "../components/shared/NavBar.tsx"
 import { useAuth } from "../context/AuthContext.tsx"
+import Alert from "@mui/material/Alert"
 
 type Dictado = D<Docente, Materia>
 type Consulta = C<Dictado>
@@ -36,6 +37,8 @@ export default function Consulta() {
     // Variables de control sobre cargas y errores
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
+    const [alert, setAlert] = useState<{ message?: string, severity?: "error" | "success" }>({})
+    const [buttonDisabled, setButtonDisabled] = useState(false)
     // Parámetros en la URL
     const [searchParams, setSearchParams] = useSearchParams()
     // Hook para navegar
@@ -44,10 +47,10 @@ export default function Consulta() {
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
+    let limitOptions = [5, 10, 15, 20, 25]
     // Sorting
     const [sort, setSort] = useState<"asc" | "desc">("asc")
     const [sortBy, setSortBy] = useState<string>("Legajo")
-    let limitOptions = [5, 10, 15, 20, 25]
     // Auth
     const auth = useAuth()
 
@@ -159,6 +162,21 @@ export default function Consulta() {
         setSort(newSort)
     }
 
+    const handleEditarConsulta = () => {
+        navigate(`${ROUTES.CONSULTA_EDIT}`, { state: consulta })
+    }
+
+    const handleEliminarConsulta = async () => {
+        try {
+            const res = await apiClient.delete(API_ROUTES.CONSULTAS.DELETE((consulta as Consulta)._id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            setAlert({ message: `${res.message}. En breve será redireccionado a la página de consultas`, severity: "success" })
+            setButtonDisabled(true)
+            setTimeout(() => navigate(ROUTES.CONSULTAS, { replace: true }), 5000)
+        } catch (err: any) {
+            setAlert({ message: err.message, severity: "error" })
+        }
+    }
+
     let datosConsulta = <></>
 
     if (loading) {
@@ -166,20 +184,29 @@ export default function Consulta() {
     } else if (consulta) {
         datosConsulta =
             <>
-                <Typography variant="h5" mb={1} mt={2} textAlign={"left"}>Datos de la consulta</Typography>
-                <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
-                    Materia: <Typography color="textPrimary" component="span" fontSize="inherit">{consulta?.dictado.materia.descripcion || ""}</Typography>
-                </Typography>
-                <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
-                    Docente: <Typography color="textPrimary" component="span" fontSize="inherit">{consulta?.dictado.docente.apellido || ""} {consulta?.dictado.docente.nombre || ""}</Typography>
-                </Typography>
-
-                <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
-                    Fecha: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta?.horaInicio || 0).dateString()}</Typography>
-                </Typography>
-                <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
-                    Horario: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta?.horaInicio || 0).timeString()} - {new Date(consulta?.horaFin || 0).timeString()}</Typography>
-                </Typography>
+                <Typography variant="h6" mb={1} mt={2} textAlign={"left"}>Datos de la consulta</Typography>
+                <Box display={"flex"}>
+                    <Paper sx={{ p: 2 }} elevation={3}>
+                        <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
+                            Materia: <Typography color="textPrimary" component="span" fontSize="inherit">{consulta?.dictado.materia.descripcion || ""}</Typography>
+                        </Typography>
+                        <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
+                            Docente: <Typography color="textPrimary" component="span" fontSize="inherit">{consulta?.dictado.docente.apellido || ""} {consulta?.dictado.docente.nombre || ""}</Typography>
+                        </Typography>
+                        <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
+                            Fecha: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta?.horaInicio || 0).dateString()}</Typography>
+                        </Typography>
+                        <Typography color="textSecondary" align="left" mb={1} mr={{ xs: 2 }}>
+                            Horario: <Typography color="textPrimary" component="span" fontSize="inherit">{new Date(consulta?.horaInicio || 0).timeString()} - {new Date(consulta?.horaFin || 0).timeString()}</Typography>
+                        </Typography>
+                        {auth.user?.rol === "docente" &&
+                            <Grid container spacing={2} justifyContent="space-between">
+                                <Button color="primary" startIcon={<Icon>edit</Icon>} disabled={buttonDisabled} onClick={handleEditarConsulta}>Editar</Button>
+                                <Button color="error" startIcon={<Icon>delete</Icon>} disabled={buttonDisabled} onClick={handleEliminarConsulta}>Eliminar</Button>
+                            </Grid>
+                        }
+                    </Paper>
+                </Box>
             </>
     }
 
@@ -191,14 +218,14 @@ export default function Consulta() {
         alumnosInscriptos = <Typography variant="body1">{error}</Typography>
     } else if (alumnos.length === 0) {
         alumnosInscriptos = <>
-            <Typography variant="h5" mt={2} mb={1} textAlign={"left"}>Alumnos inscriptos</Typography>
+            <Typography variant="h6" mt={2} mb={1} textAlign={"left"}>Alumnos inscriptos</Typography>
             <Typography variant="body1" textAlign={"left"}>Todavía no hay alumnos inscriptos</Typography>
         </>
     } else {
         alumnosInscriptos = <>
-            <Typography variant="h5" mt={2} mb={1} textAlign={"left"}>Alumnos inscriptos</Typography>
+            <Typography variant="h6" mt={2} mb={1} textAlign={"left"}>Alumnos inscriptos</Typography>
             <Grid container sx={{ alignItems: "center", justifyContent: "right" }}>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} elevation={3}>
                     <Table size={"small"}>
                         <TableHead>
                             <TableRow>
@@ -256,6 +283,11 @@ export default function Consulta() {
             >
                 <Box display={"flex"}>
                     <Button variant="text" startIcon={<Icon>arrow_back</Icon>} onClick={() => navigate(ROUTES.CONSULTAS)}>Volver</Button>
+                </Box>
+                <Box>
+                    {alert.message && <Alert severity={alert.severity} sx={{ mb: 2 }} onClose={() => setAlert({})}>
+                        {alert.message}
+                    </Alert>}
                 </Box>
                 {datosConsulta}
                 {alumnosInscriptos}

@@ -20,8 +20,11 @@ export function DocenteCardSkeleton() {
             }}
             >
                 <Grid container alignItems={"center"}>
-                    <Grid size={{ xs: 12, md: 8, lg: 6 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
-                        <Typography variant="h5" component="div" align="inherit" sx={{ py: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                    <Grid size={{ xs: 12, md: 8, lg: 6 }} sx={{ py: { md: 2 }, textAlign: { xs: "center", md: "left" } }}>
+                        <Typography variant="h6" component="div" align="inherit" sx={{ fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                            <Skeleton />
+                        </Typography>
+                        <Typography variant="body1" color="textDisabled" component="div" align="inherit" sx={{ fontSize: { xs: "1rem", md: "1rem", lg: "1rem" } }}>
                             <Skeleton />
                         </Typography>
                     </Grid>
@@ -65,9 +68,12 @@ export default function MateriaCard({ docente, options }: { docente: Docente, op
             }}
             >
                 <Grid container alignItems={"center"}>
-                    <Grid size={{ xs: 12, md: "auto" }} sx={{ textAlign: { xs: "center", md: "left" } }}>
-                        <Typography variant="h5" component="div" align="inherit" sx={{ py: { md: 2 }, fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
+                    <Grid size={{ xs: 12, md: "auto" }} sx={{ py: { md: 2 }, textAlign: { xs: "center", md: "left" } }}>
+                        <Typography variant="h6" component="div" align="inherit" sx={{ fontSize: { xs: "1rem", md: "1.4rem", lg: "1.5rem" } }}>
                             {docente.nombre} {docente.apellido}
+                        </Typography>
+                        <Typography variant="body1" color="textDisabled" component="div" align="inherit" sx={{ fontSize: { xs: "0.85rem", md: "0.95rem", lg: "1rem" } }}>
+                            {docente.correo}
                         </Typography>
                     </Grid>
                     <Grid container size={{ xs: 12, md: "grow" }} alignItems={"center"}>

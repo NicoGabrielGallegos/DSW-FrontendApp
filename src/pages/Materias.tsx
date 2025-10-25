@@ -16,11 +16,11 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 
 let sortingOptions: { value: string, text: string }[] = [
     {
-        text: "Nombre [A-Z]",
+        text: "Materia [A-Z]",
         value: "descripcion:1"
     },
     {
-        text: "Nombre [Z-A]",
+        text: "Materia [Z-A]",
         value: "descripcion:-1"
     },
 ]

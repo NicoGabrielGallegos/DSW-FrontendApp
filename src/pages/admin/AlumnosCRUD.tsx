@@ -16,6 +16,7 @@ import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TablePagination from "@mui/material/TablePagination"
 import Alert from "@mui/material/Alert"
+import TableSortLabel from "@mui/material/TableSortLabel"
 
 export default function AlumnosCRUD() {
     const [alumnos, setAlumnos] = useState<Alumno[]>([])
@@ -25,6 +26,11 @@ export default function AlumnosCRUD() {
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(1)
+    // Elemento seleccionado para editar
+    const [selected, setSelected] = useState<Alumno | null>(null)
+    // Sorting
+    const [sort, setSort] = useState<"asc" | "desc">("asc")
+    const [sortBy, setSortBy] = useState<string>("Legajo")
 
     async function fetchAlumnos() {
         console.log(page, count);
@@ -93,16 +99,64 @@ export default function AlumnosCRUD() {
         }
     }
 
+    async function updateAlumno(id: string) {
+        const body = {
+            legajo: (document.getElementById("legajo") as HTMLInputElement).value,
+            nombre: (document.getElementById("nombre") as HTMLInputElement).value,
+            apellido: (document.getElementById("apellido") as HTMLInputElement).value,
+            correo: (document.getElementById("correo") as HTMLInputElement).value,
+        }
+
+        if (!body.legajo || !body.nombre || !body.apellido || !body.correo) {
+            let err = "Campos incompletos: "
+            Object.keys(body).forEach(key => {
+                if (!body[key as keyof typeof body]) {
+                    err += key + ", "
+                }
+            })
+            setMessage(err.slice(0, -2))
+            setSeverity("error")
+            return
+        }
+
+        try {
+            const res = await apiClient.put(API_ROUTES.ALUMNOS.UPDATE(id), { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, body })
+            setMessage(`${res.message}: ${res.data.legajo}, ${res.data.nombre} ${res.data.apellido}`)
+            setSeverity("success")
+            setSelected(null)
+            fetchAlumnos()
+        } catch (err: any) {
+            setMessage(err.message)
+            setSeverity("error")
+        }
+    }
+
     useEffect(() => {
         searchParams.set("p", "1")
         searchParams.set("l", "10")
         fetchAlumnos()
     }, [])
 
+    useEffect(() => {
+        const sortParam = searchParams.get("sort")?.toString().split(",")[0] || "nombre:asc"
+        const [field, order] = sortParam.split(":")
+
+        if (field) setSortBy(field)
+        if (order === "desc") setSort(order); else setSort("asc")
+
+        fetchAlumnos()
+    }, [searchParams])
+
+    useEffect(() => {
+        searchParams.set("sort", `${sortBy.toLowerCase()}:${sort}`)
+        setSearchParams(searchParams, { replace: true })
+    }, [sort, sortBy])
+
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
         searchParams.set("p", (newPage + 1).toString())
-        setSearchParams(searchParams, {replace: true})
+        setSearchParams(searchParams, { replace: true })
+        setSelected(null)
         fetchAlumnos()
     };
 
@@ -110,9 +164,30 @@ export default function AlumnosCRUD() {
         setLimit(parseInt(event.target.value));
         setPage(0);
         searchParams.set("l", event.target.value)
-        setSearchParams(searchParams, {replace: true})
+        setSearchParams(searchParams, { replace: true })
+        setSelected(null)
         fetchAlumnos()
     };
+
+    function handleEdit(alumno: Alumno) {
+        setSelected(alumno)
+    }
+
+    const handleSort = (text: string) => {
+        let newSort: "asc" | "desc"
+
+        setSortBy(prevText => {
+            prevText
+            return text
+        })
+
+        if (sortBy === text) {
+            newSort = sort === "asc" ? "desc" : "asc"
+        } else {
+            newSort = "asc"
+        }
+        setSort(newSort)
+    }
 
     return (
         <>
@@ -123,24 +198,47 @@ export default function AlumnosCRUD() {
                 <Table size={"small"}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell>Legajo</TableCell>
-                            <TableCell>Nombre</TableCell>
-                            <TableCell>Apellido</TableCell>
-                            <TableCell>Correo</TableCell>
+                            {["Id", "Legajo", "Nombre", "Apellido", "Correo"].map((text, idx) => {
+                                return (
+                                    <TableCell sortDirection={"asc"} key={idx}>
+                                        <TableSortLabel
+                                            active={sortBy === text.toLowerCase()}
+                                            direction={sortBy === text.toLowerCase() ? sort : "asc"}
+                                            onClick={() => handleSort(text.toLowerCase())}
+                                            sx={{ fontSize: { xs: "0.8rem", md: "1rem" } }}
+                                        >
+                                            {text}
+                                        </TableSortLabel>
+                                    </TableCell>
+                                )
+                            })}
                             <TableCell>Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {alumnos.map((alumno, idx) => {
-                            return (
+                            return (selected?._id === alumno._id
+                                ?
+                                <TableRow key={idx}>
+                                    <TableCell><Typography variant="subtitle2">{alumno._id}</Typography></TableCell>
+                                    <TableCell><TextField id="legajo" variant="standard" size="small" fullWidth defaultValue={alumno.legajo} /></TableCell>
+                                    <TableCell><TextField id="nombre" variant="standard" size="small" fullWidth defaultValue={alumno.nombre} /></TableCell>
+                                    <TableCell><TextField id="apellido" variant="standard" size="small" fullWidth defaultValue={alumno.apellido} /></TableCell>
+                                    <TableCell><TextField id="correo" variant="standard" size="small" fullWidth defaultValue={alumno.correo} /></TableCell>
+                                    <TableCell sx={{ minWidth: 100 }}>
+                                        <IconButton onClick={() => updateAlumno(alumno._id)} size="small"><Icon color="success">done</Icon></IconButton>
+                                        <IconButton onClick={() => setSelected(null)} size="small"><Icon color="error">close</Icon></IconButton>
+                                    </TableCell>
+                                </TableRow>
+                                :
                                 <TableRow key={idx}>
                                     <TableCell><Typography variant="subtitle2">{alumno._id}</Typography></TableCell>
                                     <TableCell>{alumno.legajo}</TableCell>
                                     <TableCell>{alumno.nombre}</TableCell>
                                     <TableCell>{alumno.apellido}</TableCell>
                                     <TableCell>{alumno.correo}</TableCell>
-                                    <TableCell>
+                                    <TableCell sx={{ minWidth: 100 }}>
+                                        <IconButton onClick={() => handleEdit(alumno)} size="small"><Icon color="primary">edit</Icon></IconButton>
                                         <IconButton onClick={() => deleteAlumno(alumno._id)} size="small"><Icon color="action">delete</Icon></IconButton>
                                     </TableCell>
                                 </TableRow>
