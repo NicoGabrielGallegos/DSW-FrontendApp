@@ -39,8 +39,6 @@ export default function DictadosCRUD() {
     const [inputMateria, setInputMateria] = useState<string>("")
 
     async function fetchDictados() {
-        console.log(page, count);
-
         try {
             let params: { p?: string, l?: string, populate: string } = { populate: "docente,materia" }
             let page = searchParams.get("p")
@@ -119,6 +117,7 @@ export default function DictadosCRUD() {
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLimit(parseInt(event.target.value));
         setPage(0);
+        searchParams.set("p", "1")
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams, { replace: true })
         fetchDictados()
@@ -231,6 +230,10 @@ export default function DictadosCRUD() {
                 </Table>
             </TableContainer>
             <TablePagination
+                labelRowsPerPage="Resultados por página:"
+                labelDisplayedRows={({ from, to, count }) => {
+                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                }}
                 rowsPerPageOptions={[5, 10, 15, 20, 25]}
                 component="div"
                 count={count}

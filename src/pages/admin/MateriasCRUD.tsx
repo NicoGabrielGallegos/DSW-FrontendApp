@@ -33,8 +33,6 @@ export default function MateriasCRUD() {
     const [sortBy, setSortBy] = useState<string>("Legajo")
 
     async function fetchMaterias() {
-        console.log(page, count);
-
         try {
             let params: { p?: string, l?: string, sort?: string } = {}
             let page = searchParams.get("p")
@@ -54,7 +52,7 @@ export default function MateriasCRUD() {
     }
 
     async function createMateria() {
-        const body = { descripcion: (document.getElementById("descripcion") as HTMLInputElement).value }
+        const body = { descripcion: (document.getElementById("descripcion") as HTMLInputElement).value.trim() }
 
         if (!body.descripcion) {
             setMessage("Campos incompletos: descripcion")
@@ -138,6 +136,7 @@ export default function MateriasCRUD() {
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLimit(parseInt(event.target.value));
         setPage(0);
+        searchParams.set("p", "1")
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams, { replace: true })
         setSelected(null)
@@ -201,7 +200,7 @@ export default function MateriasCRUD() {
                                 <TableRow key={idx}>
                                     <TableCell><Typography variant="subtitle2">{materia._id}</Typography></TableCell>
                                     <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth defaultValue={materia.descripcion} /></TableCell>
-                                    <TableCell sx={{minWidth: 100}}>
+                                    <TableCell sx={{ minWidth: 100 }}>
                                         <IconButton onClick={() => updateMateria(materia._id)} size="small"><Icon color="success">done</Icon></IconButton>
                                         <IconButton onClick={() => setSelected(null)} size="small"><Icon color="error">close</Icon></IconButton>
                                     </TableCell>
@@ -210,7 +209,7 @@ export default function MateriasCRUD() {
                                 <TableRow key={idx}>
                                     <TableCell><Typography variant="subtitle2">{materia._id}</Typography></TableCell>
                                     <TableCell>{materia.descripcion}</TableCell>
-                                    <TableCell sx={{minWidth: 100}}>
+                                    <TableCell sx={{ minWidth: 100 }}>
                                         <IconButton onClick={() => handleEdit(materia)} size="small"><Icon color="primary">edit</Icon></IconButton>
                                         <IconButton onClick={() => deleteMateria(materia._id)} size="small"><Icon color="action">delete</Icon></IconButton>
                                     </TableCell>
@@ -228,6 +227,10 @@ export default function MateriasCRUD() {
                 </Table>
             </TableContainer>
             <TablePagination
+                labelRowsPerPage="Resultados por página:"
+                labelDisplayedRows={({ from, to, count }) => {
+                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                }}
                 rowsPerPageOptions={[5, 10, 15, 20, 25]}
                 component="div"
                 count={count}

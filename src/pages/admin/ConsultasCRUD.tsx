@@ -124,6 +124,7 @@ export default function InscripcionesCRUD() {
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLimit(parseInt(event.target.value));
         setPage(0);
+        searchParams.set("p", "1")
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams, { replace: true })
         fetchConsultas()
@@ -243,7 +244,7 @@ export default function InscripcionesCRUD() {
                                     onChange={onSelectHoraInicio}
                                     clearable
                                     variant="standard"
-                                    sx={{maxWidth: 230}}
+                                    sx={{ maxWidth: 230 }}
                                 />
                             </TableCell>
                             <TableCell>
@@ -252,13 +253,13 @@ export default function InscripcionesCRUD() {
                                     onChange={onSelectHoraFin}
                                     clearable
                                     variant="standard"
-                                    sx={{maxWidth: 230}}
+                                    sx={{ maxWidth: 230 }}
                                 />
                             </TableCell>
                             <TableCell>
                                 <ControlledAutocomplete
                                     id="estado"
-                                    options={Object.keys(EstadoConsulta).map(estado => { return { id: estado, label: EstadoConsulta[estado as keyof typeof EstadoConsulta]} })}
+                                    options={Object.keys(EstadoConsulta).map(estado => { return { id: estado, label: EstadoConsulta[estado as keyof typeof EstadoConsulta] } })}
                                     value={valueEstado}
                                     onChange={onSelectEstado}
                                     inputValue={inputEstado}
@@ -266,7 +267,7 @@ export default function InscripcionesCRUD() {
                                         setInputEstado(newInputValue);
                                     }}
                                     variant="standard"
-                                    sx={{minWidth: 150}}
+                                    sx={{ minWidth: 150 }}
                                 />
                             </TableCell>
                             <TableCell>
@@ -277,6 +278,10 @@ export default function InscripcionesCRUD() {
                 </Table>
             </TableContainer>
             <TablePagination
+                labelRowsPerPage="Resultados por página:"
+                labelDisplayedRows={({ from, to, count }) => {
+                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                }}
                 rowsPerPageOptions={[5, 10, 15, 20, 25]}
                 component="div"
                 count={count}

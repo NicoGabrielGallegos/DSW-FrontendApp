@@ -105,8 +105,8 @@ export default function Materias() {
     useEffect(() => {
         async function initPage() {
             setVariablesFromParams()
-            searchParams.set("p", (page + 1).toString())
-            searchParams.set("l", limit.toString())
+            searchParams.set("p", (page + 1).toString() || "1")
+            searchParams.set("l", limit.toString() || "5")
             setSearchParams(searchParams, { replace: true })
             await fetchMaterias()
             await fetchDocentes()

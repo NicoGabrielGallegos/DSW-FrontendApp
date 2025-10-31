@@ -33,14 +33,14 @@ export default function AlumnosCRUD() {
     const [sortBy, setSortBy] = useState<string>("Legajo")
 
     async function fetchAlumnos() {
-        console.log(page, count);
-
         try {
-            let params: { p?: string, l?: string } = {}
+            let params: { p?: string, l?: string, sort?: string } = {}
             let page = searchParams.get("p")
             if (page) params.p = page
             let limit = searchParams.get("l")
             if (limit) params.l = limit
+            let sort = searchParams.get("sort")
+            if (sort) params.sort = sort
 
             const res = await apiClient.get(API_ROUTES.ALUMNOS.FIND_ALL, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }, params })
             setAlumnos(res.data)
@@ -53,10 +53,10 @@ export default function AlumnosCRUD() {
 
     async function createAlumno() {
         const body = {
-            legajo: (document.getElementById("legajo") as HTMLInputElement).value,
-            nombre: (document.getElementById("nombre") as HTMLInputElement).value,
-            apellido: (document.getElementById("apellido") as HTMLInputElement).value,
-            correo: (document.getElementById("correo") as HTMLInputElement).value,
+            legajo: (document.getElementById("legajo") as HTMLInputElement).value.trim(),
+            nombre: (document.getElementById("nombre") as HTMLInputElement).value.trim(),
+            apellido: (document.getElementById("apellido") as HTMLInputElement).value.trim(),
+            correo: (document.getElementById("correo") as HTMLInputElement).value.trim(),
             password: ""
         }
         body.password = `${body.nombre[0]}${body.apellido[0]}${body.legajo}`.toLowerCase()
@@ -163,6 +163,7 @@ export default function AlumnosCRUD() {
     const handleChangeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLimit(parseInt(event.target.value));
         setPage(0);
+        searchParams.set("p", "1")
         searchParams.set("l", event.target.value)
         setSearchParams(searchParams, { replace: true })
         setSelected(null)
@@ -258,6 +259,10 @@ export default function AlumnosCRUD() {
                 </Table>
             </TableContainer>
             <TablePagination
+                labelRowsPerPage="Resultados por página:"
+                labelDisplayedRows={({ from, to, count }) => {
+                    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`;
+                }}
                 rowsPerPageOptions={[5, 10, 15, 20, 25]}
                 component="div"
                 count={count}
