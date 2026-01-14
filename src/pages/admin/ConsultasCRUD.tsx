@@ -197,7 +197,6 @@ export default function InscripcionesCRUD() {
                 <Table size={"small"}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Id</TableCell>
                             <TableCell>Dictado</TableCell>
                             <TableCell>Hora de Inicio</TableCell>
                             <TableCell>Hora de Fin</TableCell>
@@ -209,7 +208,6 @@ export default function InscripcionesCRUD() {
                         {consultas.map((consulta, idx) => {
                             return (
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{consulta._id}</Typography></TableCell>
                                     <TableCell>
                                         <Typography variant="body2" fontSize={10} color="textSecondary">{consulta.dictado._id}</Typography>
                                         <Typography variant="body2">{getLabelDictado(consulta.dictado)}</Typography>
@@ -224,7 +222,6 @@ export default function InscripcionesCRUD() {
                             )
                         })}
                         <TableRow>
-                            <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
                             <TableCell>
                                 <ControlledAutocomplete
                                     id="dictado"

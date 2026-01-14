@@ -169,7 +169,6 @@ export default function DictadosCRUD() {
                 <Table size={"small"}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Id</TableCell>
                             <TableCell>Docente</TableCell>
                             <TableCell>Materia</TableCell>
                             <TableCell>Acciones</TableCell>
@@ -179,7 +178,6 @@ export default function DictadosCRUD() {
                         {dictados.map((dictado, idx) => {
                             return (
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{dictado._id}</Typography></TableCell>
                                     <TableCell>
                                         <Typography variant="body2" fontSize={10} color="textSecondary">{dictado.docente._id}</Typography>
                                         <Typography variant="body2">{getNombreDocente(dictado.docente)}</Typography>
@@ -195,7 +193,6 @@ export default function DictadosCRUD() {
                             )
                         })}
                         <TableRow>
-                            <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
                             <TableCell>
                                 <ControlledAutocomplete
                                     id="docente"

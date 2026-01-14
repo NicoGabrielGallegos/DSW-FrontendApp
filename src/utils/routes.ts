@@ -10,6 +10,7 @@ export const ROUTES = {
     CONSULTA_BY_ID: (id: string) => `/consultas/${id}`,
     CONSULTA_NUEVA: "/nueva_consulta",
     CONSULTA_EDIT: "/modificar_consulta",
+    CAMBIAR_PASSWORD: "/cambiar_password",
     ADMIN: {
         ROOT: "/admin",
         CRUD_ALUMNOS: "/admin/alumnos",

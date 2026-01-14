@@ -199,7 +199,7 @@ export default function AlumnosCRUD() {
                 <Table size={"small"}>
                     <TableHead>
                         <TableRow>
-                            {["Id", "Legajo", "Nombre", "Apellido", "Correo"].map((text, idx) => {
+                            {["Legajo", "Nombre", "Apellido", "Correo"].map((text, idx) => {
                                 return (
                                     <TableCell sortDirection={"asc"} key={idx}>
                                         <TableSortLabel
@@ -221,7 +221,6 @@ export default function AlumnosCRUD() {
                             return (selected?._id === alumno._id
                                 ?
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{alumno._id}</Typography></TableCell>
                                     <TableCell><TextField id="legajo" variant="standard" size="small" fullWidth defaultValue={alumno.legajo} /></TableCell>
                                     <TableCell><TextField id="nombre" variant="standard" size="small" fullWidth defaultValue={alumno.nombre} /></TableCell>
                                     <TableCell><TextField id="apellido" variant="standard" size="small" fullWidth defaultValue={alumno.apellido} /></TableCell>
@@ -233,7 +232,6 @@ export default function AlumnosCRUD() {
                                 </TableRow>
                                 :
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{alumno._id}</Typography></TableCell>
                                     <TableCell>{alumno.legajo}</TableCell>
                                     <TableCell>{alumno.nombre}</TableCell>
                                     <TableCell>{alumno.apellido}</TableCell>
@@ -246,7 +244,6 @@ export default function AlumnosCRUD() {
                             )
                         })}
                         <TableRow>
-                            <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
                             <TableCell><TextField id="legajo" variant="standard" size="small" fullWidth /></TableCell>
                             <TableCell><TextField id="nombre" variant="standard" size="small" fullWidth /></TableCell>
                             <TableCell><TextField id="apellido" variant="standard" size="small" fullWidth /></TableCell>

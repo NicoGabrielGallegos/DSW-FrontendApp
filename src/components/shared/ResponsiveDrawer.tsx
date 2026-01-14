@@ -99,6 +99,16 @@ export default function ResponsiveDrawer({ title, children }: { title: string, c
             }
             <Divider />
             <List>
+                <RouterLink to={ROUTES.CAMBIAR_PASSWORD}>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Icon>lock_reset</Icon>
+                            </ListItemIcon>
+                            <ListItemText primary="Cambiar contraseña" />
+                        </ListItemButton>
+                    </ListItem>
+                </RouterLink>
                 <ListItem disablePadding>
                     <ListItemButton onClick={auth.logout}>
                         <ListItemIcon>

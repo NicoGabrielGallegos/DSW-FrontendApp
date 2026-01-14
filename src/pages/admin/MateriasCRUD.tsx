@@ -6,7 +6,6 @@ import { apiClient } from "../../api/apiClient.ts"
 import TextField from "@mui/material/TextField"
 import IconButton from "@mui/material/IconButton"
 import Icon from "@mui/material/Icon"
-import Typography from "@mui/material/Typography"
 import Table from "@mui/material/Table"
 import TableContainer from "@mui/material/TableContainer"
 import Paper from "@mui/material/Paper"
@@ -176,7 +175,7 @@ export default function MateriasCRUD() {
                 <Table size={"small"}>
                     <TableHead>
                         <TableRow>
-                            {["Id", "Descripcion"].map((text, idx) => {
+                            {["Descripcion"].map((text, idx) => {
                                 return (
                                     <TableCell sortDirection={"asc"} key={idx}>
                                         <TableSortLabel
@@ -198,7 +197,6 @@ export default function MateriasCRUD() {
                             return (selected?._id === materia._id
                                 ?
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{materia._id}</Typography></TableCell>
                                     <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth defaultValue={materia.descripcion} /></TableCell>
                                     <TableCell sx={{ minWidth: 100 }}>
                                         <IconButton onClick={() => updateMateria(materia._id)} size="small"><Icon color="success">done</Icon></IconButton>
@@ -207,7 +205,6 @@ export default function MateriasCRUD() {
                                 </TableRow>
                                 :
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{materia._id}</Typography></TableCell>
                                     <TableCell>{materia.descripcion}</TableCell>
                                     <TableCell sx={{ minWidth: 100 }}>
                                         <IconButton onClick={() => handleEdit(materia)} size="small"><Icon color="primary">edit</Icon></IconButton>
@@ -217,7 +214,6 @@ export default function MateriasCRUD() {
                             )
                         })}
                         <TableRow>
-                            <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
                             <TableCell><TextField id="descripcion" variant="standard" size="small" fullWidth onKeyDown={event => onPressEnter(event, createMateria)} /></TableCell>
                             <TableCell>
                                 <IconButton onClick={createMateria} size="small"><Icon color="primary">add</Icon></IconButton>

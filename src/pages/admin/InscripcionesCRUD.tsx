@@ -202,7 +202,6 @@ export default function InscripcionesCRUD() {
                 <Table size={"small"}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Id</TableCell>
                             <TableCell>Alumno</TableCell>
                             <TableCell>Consulta</TableCell>
                             <TableCell>Acciones</TableCell>
@@ -212,7 +211,6 @@ export default function InscripcionesCRUD() {
                         {inscripciones.map((inscripcion, idx) => {
                             return (
                                 <TableRow key={idx}>
-                                    <TableCell><Typography variant="subtitle2">{inscripcion._id}</Typography></TableCell>
                                     <TableCell>
                                         <Typography variant="body2" fontSize={10} color="textSecondary">{inscripcion.alumno._id}</Typography>
                                         <Typography variant="body2">{getNombreAlumno(inscripcion.alumno)}</Typography>
@@ -228,7 +226,6 @@ export default function InscripcionesCRUD() {
                             )
                         })}
                         <TableRow>
-                            <TableCell><Typography variant="body2" color="textSecondary">autogenerado</Typography></TableCell>
                             <TableCell>
                                 <ControlledAutocomplete
                                     id="docente"

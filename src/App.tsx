@@ -20,6 +20,7 @@ import { ROUTES } from './utils/routes.ts'
 import Consulta from './pages/Consulta.tsx'
 import NuevaConsulta from './pages/NuevaConsulta.tsx'
 import ModificarConsulta from './pages/ModificarConsulta.tsx'
+import CambiarPassword from './pages/CambiarPassword.tsx'
 
 function App() {
   return (
@@ -82,6 +83,13 @@ function App() {
             {
               <PrivateRoute authorizedRoles={["docente"]} redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
                 <ModificarConsulta />
+              </PrivateRoute>
+            }
+          />
+          <Route path={ROUTES.CAMBIAR_PASSWORD} element=
+            {
+              <PrivateRoute redirectTo={ROUTES.LOGIN_ALUMNOS} replace>
+                <CambiarPassword />
               </PrivateRoute>
             }
           />

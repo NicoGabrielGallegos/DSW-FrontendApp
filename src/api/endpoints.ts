@@ -5,6 +5,7 @@ export const API_ROUTES = {
         LOGIN_ALUMNO: `${BASE_URL}/auth/alumno`,
         LOGIN_DOCENTES: `${BASE_URL}/auth/docente`,
         LOGIN_ADMINISTRADORES: `${BASE_URL}/auth/administrador`,
+        CAMBIAR_PASSWORD: `${BASE_URL}/auth/cambiarPassword`
     },
     ADMINISTRADORES: {
         FIND_ALL: `${BASE_URL}/administradores`,
